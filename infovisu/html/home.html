@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CrimeWatch DC – Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+</head>
+<body>
+
+    <header>
+        <h1><span class="highlight">CrimeWatch DC</span></h1>
+        <p class="subtitle-big">Empowering Safety. Enabling Action.</p>
+        <p class="subtitle-small">Real-time crime insights for Washington DC. Built for police, policymakers, and citizens who protect and serve.</p>
+      </header>
+      
+  <section class="dashboard">
+
+    <div class="top-section">
+      <div class="map-container">
+        <h2>Top 3 Most Dangerous Area</h2>
+        <div id="danger-map"></div>
+      </div>
+
+      <div class="chart-container">
+        <h2>Top Districts by Crime</h2>
+        <canvas id="district-chart"></canvas>
+      </div>
+    </div>
+
+    <div class="bottom-section">
+      <div class="info-card">
+        <h3 id="total-crimes">-</h3>
+        <p>Total Crimes</p>
+      </div>
+
+      <div class="info-card">
+        <h3 id="top-ward">-</h3>
+        <p>Most Dangerous Ward</p>
+      </div>
+
+      <div class="info-card">
+        <h3 id="top-offense">-</h3>
+        <p>Most Common Crime Type</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="actions-section">
+    <h2>Take Action</h2>
+    <div class="action-buttons">
+      <a href="patrol.html" class="action-button">Patrol</a>
+      <a href="resource-allocation.html" class="action-button">Allocate Resources</a>
+      <a href="plan-visit.html" class="action-button">Check Your Visit</a>
+    </div>
+  </section>
+  
+ 
+  <footer>
+    <p>© 2025 CrimeWatch DC – Built with ❤️</p>
+  </footer>
+
+  <script src="../js/home.js"></script>
+</body>
+</html>

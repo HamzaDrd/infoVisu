@@ -1,0 +1,98 @@
+[
+    {
+        "name": "Washington Obelisk",
+        "address": "Independence Avenue Southwest, Penn Quarter ",
+        "latitude": 38.889483,
+        "longitude": -77.0352501,
+        "category": "Monument",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477506/post_images/washington-8/Monumentos/51675347016_2863dd3166_o_1_Cropped.jpg"
+    },
+    {
+        "name": "Vietnam Veterans Memorial",
+        "address": "Vietnam Veterans Memorial, Henry Bacon Drive Northwest ",
+        "latitude": 38.8909801,
+        "longitude": -77.0480866,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477558/post_images/washington-8/Monumentos/6142012235_1e0cf18685_o.jpg"
+    },
+    {
+        "name": "Martin Luther King Memorial",
+        "address": "Martin Luther King, Jr. Memorial, Independence Avenue Southwest ",
+        "latitude": 38.8861,
+        "longitude": -77.0443408,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661300662/post_images/washington-8/ver-hacer-washington/8175157815_6a45c561e9_o_Cropped.jpg"
+    },
+    {
+        "name": "National World War II Memorial",
+        "address": "World War II Memorial, Independence Avenue Southwest ",
+        "latitude": 38.889395,
+        "longitude": -77.040308,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477661/post_images/washington-8/ver-hacer-washington/monumento-de-segunda-guerra-mundial-3b1b2a77af4bef1441942cbc11df180b_Cropped.jpg"
+    },
+    {
+        "name": "Abraham Lincoln Memorial",
+        "address": "Lincoln Memorial, Lincoln Steps ",
+        "latitude": 38.8892122,
+        "longitude": -77.050172,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661304523/post_images/washington-8/ver-hacer-washington/50113866291_9a1220aa70_o_Cropped.jpg"
+    },
+    {
+        "name": "Ulysses S. Grant Memorial",
+        "address": "Ulysses S. Grant Memorial, 1st Street Northwest ",
+        "latitude": 38.8897666,
+        "longitude": -77.0128106,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477786/post_images/washington-8/Monumentos/8795022646_386635ba0f_o_Cropped.jpg"
+    },
+    {
+        "name": "Albert Einstein Memorial",
+        "address": "Albert Einstein Memorial, Constitution Avenue Northwest ",
+        "latitude": 38.8923968,
+        "longitude": -77.0484445,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477824/post_images/washington-8/Monumentos/Albert_Einstein_DC_Cropped.jpg"
+    },
+    {
+        "name": "Thomas Jefferson Memorial",
+        "address": "Thomas Jefferson Memorial bookstore, West Basin Drive SW Cycletrack ",
+        "latitude": 38.8816596,
+        "longitude": -77.036816,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1629202441/post_images/washington-8/washington-tours/yeon-choi-jzgIgLCGGZc-unsplash_Cropped.jpg"
+    },
+    {
+        "name": "Franklin Delano Roosevelt Memorial",
+        "address": "Franklin Delano Roosevelt Memorial, West Basin Drive Southwest ",
+        "latitude": 38.8832969,
+        "longitude": -77.0427371,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661477993/post_images/washington-8/Monumentos/40179668752_fa5d4fd5da_o_Cropped.jpg"
+    },
+    {
+        "name": "Iwo Jima Memorial",
+        "address": "Arlington Ridge Park, North Meade Street, Rosslyn, Arlington VA",
+        "latitude": 38.8901,
+        "longitude": -77.0697,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661478014/post_images/washington-8/Monumentos/2018-10-31_15_25_21_The_west_side_of_the_Marine_Corps_War_Memorial_in_Arlington_County__Virginia_Cropped.jpg"
+    },
+    {
+        "name": "Korean War Veterans Memorial",
+        "address": "Korean War Veterans Memorial, Daniel French Drive SW ",
+        "latitude": 38.8878393,
+        "longitude": -77.0477492,
+        "category": "Memorial",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661478124/post_images/washington-8/Monumentos/49070616103_44c1c38c87_o_Cropped.jpg"
+    },
+    {
+        "name": "White House, Capitol, and Supreme Court",
+        "address": "United States Capitol, East Front Plaza ",
+        "latitude": 38.889813,
+        "longitude": -77.0090208,
+        "category": "Government",
+        "image_url": "https://res.cloudinary.com/hello-tickets/image/upload/c_limit,f_auto,q_auto,w_768/v1661292358/post_images/washington-8/Capitolio/47173321852_a25834a308_o_Cropped.jpg"
+    }
+]
