@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CrimeWatch DC – Patrol Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="stylesheet" href="../css/patrol.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.heat/dist/leaflet-heat.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="nav-left">
+          <a href="home.html" class="nav-logo">CrimeWatch DC</a>
+        </div>
+        <div class="nav-right">
+          <a href="home.html" class="nav-link">Home</a>
+          <a href="#" class="nav-link">Check Your Visit</a>
+          <!-- later you can add more links -->
+        </div>
+      </nav>
+
+<header>
+  <h1>CrimeWatch DC</h1>
+  <p class="subtitle">Patrol Dashboard – Real-time Crime Heatmap and Zone Comparison</p>
+</header>
+
+<main>
+  <section class="patrol-dashboard">
+
+    <div class="dashboard-grid">
+      
+      <div class="side-maps">
+        <div class="compare-box">
+            <h3>Most Dangerous – District 3</h3>
+            <div id="map-most" class="mini-map"></div>
+            <ul>
+             <p><strong>Top Shift:</strong> Evening</p>
+            </ul>
+          </div>
+          
+
+          <div class="compare-box">
+            <h3>Least Dangerous – District 7</h3>
+            <div id="map-least" class="mini-map"></div>
+            <ul>
+              <p><strong>Top Shift:</strong> Evening</p>
+            </ul>
+          </div>
+      </div>
+
+      <div class="main-map-area">
+      
+        <div class="map-and-filters">
+          <div id="map"></div>
+      
+          <div class="filter-panel">
+            <button id="toggle-heatmap" class="cta-button">Show Heatmap</button>
+
+            <label for="offense-select">Offense Group:</label>
+            <select id="offense-select">
+              <option value="all">All Offenses</option>
+            </select>
+      
+            <label for="method-select">Method:</label>
+            <select id="method-select">
+              <option value="all">All Methods</option>
+            </select>
+      
+            <label for="shift-select">Shift:</label>
+            <select id="shift-select">
+              <option value="all">All Shifts</option>
+            </select>
+      
+            <label for="district-select">District:</label>
+            <select id="district-select">
+              <option value="all">All Districts</option>
+            </select>
+      
+            <label for="ward-select">Ward:</label>
+            <select id="ward-select">
+              <option value="all">All Wards</option>
+            </select>
+      
+            <label for="month-slider">Month:</label>
+            <span id="month-label">All</span>
+            <div class="slider-controls">
+              <input type="range" id="month-slider" min="0" max="12" value="0" />
+              <button id="reset-month" class="cta-button small">All</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+  </section>
+
+  <section class="dynamic-chart-section">
+    <h2>Interactive PSA Analysis</h2>
+  
+    <div class="drag-drop-grid">
+  
+      <!-- Left Y variables -->
+      <div class="y-variable-pool">
+        <h3>Y Variables</h3>
+        <div class="draggable" draggable="true" data-type="y">Offense Group</div>
+        <div class="draggable" draggable="true" data-type="y">Number of Crimes</div>
+      </div>
+  
+      <!-- Center Chart -->
+      <div class="chart-center-area">
+        <canvas id="psa-chart" width="800" height="500"></canvas>
+        <p id="chart-hint" style="color: #888; font-size: 16px; text-align: center; margin-top: 10px;">
+            Drag an X variable, a Y variable, and a PSA to populate the chart.
+          </p>
+          
+  
+        <div class="x-variable-pool">
+          <h3>X Variables</h3>
+          <div class="draggable" draggable="true" data-type="x">Shift</div>
+          <div class="draggable" draggable="true" data-type="x">Method</div>
+          <div class="draggable" draggable="true" data-type="x">Month</div>
+          <div class="draggable" draggable="true" data-type="x">Day of Week</div>
+          <div class="draggable" draggable="true" data-type="x">Year</div>
+        </div>
+      </div>
+  
+      <!-- Right PSA list -->
+      <div class="psa-pool">
+        <h3>Select PSA</h3>
+        <input type="text" id="psa-search" placeholder="Search PSA..." />
+        <div id="psa-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+  
+    </div>
+  </section>
+  
+
+  
+</main>
+
+<footer>
+  <p>© 2025 CrimeWatch DC – Built with ❤️</p>
+</footer>
+
+<script src="../js/patrol.js"></script>
+</body>
+</html>

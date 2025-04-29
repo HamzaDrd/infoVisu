@@ -1,0 +1,314 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #111;
+    color: #eee;
+    text-align: center;
+  }
+  
+  header {
+    padding: 40px 20px 20px;
+  }
+  
+  h1 {
+    font-size: 42px;
+    color: #ff4444;
+  }
+  
+  .subtitle {
+    font-size: 18px;
+    color: #bbb;
+    margin-top: 10px;
+  }
+  
+  main {
+    max-width: 1600px; /* was 1400px */
+    margin: 40px auto;
+    padding: 0 40px;    /* more breathing space */
+  }
+  
+  
+  .dashboard-grid {
+    display: flex;
+    gap: 80px; /* was 40px */
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .side-maps {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .compare-box {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 12px;
+    padding: 20px;
+    width: 300px;
+  }
+  
+  .compare-box h3 {
+    color: #ff4444;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  
+  .mini-map {
+    height: 220px;
+    width: 100%;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #333;
+  }
+  
+  .main-map-area {
+    flex: 2;
+    min-width: 800px; /* larger minimum */
+  }
+  
+  
+  #map {
+    height: 600px;
+    width: 100%;
+    border-radius: 12px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+
+  #map {
+    height: 650px; /* little bigger vertically too */
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  
+  
+  h2 {
+    color: #ff4444;
+    margin-top: 0;
+  }
+  
+  .cta-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+  
+  .cta-button:hover {
+    background-color: #ff6666;
+  }
+  
+  .cta-button.small {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .filter-panel {
+    background: #1a1a1a;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    text-align: left;
+  }
+  
+  .filter-panel label {
+    font-weight: bold;
+    color: #ddd;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  .filter-panel select,
+  .filter-panel input[type="range"] {
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 8px;
+    background: #222;
+    color: #eee;
+    border: 1px solid #444;
+  }
+  
+  .slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  footer {
+    margin-top: 60px;
+    padding: 20px;
+    font-size: 14px;
+    color: #666;
+  }
+
+  
+  .map-and-filters {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-top: 20px;
+  }
+  
+  #map {
+    height: 600px;
+    flex: 2;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  
+  .filter-panel {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+  }
+  
+
+  .dynamic-chart-section {
+    margin-top: 80px;
+    text-align: center;
+  }
+  
+  .drag-drop-grid {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  
+  /* Left Y variables */
+  .y-variable-pool, .psa-pool {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    width: 250px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+  }
+  
+  /* PSA area */
+  .psa-pool {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .chart-center-area {
+    background-color: #222 !important; /* lighter than #111 or #1a1a1a */
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Chart itself */
+  #psa-chart {
+    background: #111;
+    border-radius: 12px;
+    padding: 10px;
+    width: 100%;
+    height: 500px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  }
+  
+  /* Bottom X variables */
+  .x-variable-pool {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  /* Draggable items (variables and PSA) */
+  .draggable {
+    background-color: #222;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: grab;
+    font-size: 16px;
+    color: #eee;
+    user-select: none;
+    text-align: center;
+  }
+  
+  .draggable:hover {
+    background-color: #333;
+  }
+  
+  /* Titles */
+  .y-variable-pool h3, .psa-pool h3, .x-variable-pool h3 {
+    color: #ff4444;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  /* PSA search bar */
+  #psa-search {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    background: #222;
+    border: 1px solid #444;
+    color: #eee;
+    border-radius: 8px;
+  }
+  
+
+  .psa-pool {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    width: 250px;
+    box-shadow: 0 0 10px rgba(255,255,255,0.05);
+    max-height: 500px;           /* set fixed height */
+    overflow-y: auto;            /* allow scrolling inside */
+  }
+
+
+  /* Navigation Bar */
+.navbar {
+    background-color: #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 30px;
+  }
+  
+  .nav-logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff4444;
+    text-decoration: none;
+  }
+  
+  .nav-right .nav-link {
+    margin-left: 20px;
+    color: #eee;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+  
+  .nav-right .nav-link:hover {
+    color: #ff4444;
+  }
+  
+  /* Spacing under navbar */
+  header {
+    margin-top: 20px;
+  }
+
+  
