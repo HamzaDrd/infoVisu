@@ -11,18 +11,21 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
-
 </head>
+
+<div class="scroll-indicator" id="scroll-indicator">
+  <span class="arrow">&#x25BC;</span>
+</div>
+
+
 <body>
+  <header>
+    <h1><span class="highlight">CrimeWatch DC</span></h1>
+    <p class="subtitle-big">Empowering Safety. Enabling Action.</p>
+    <p class="subtitle-small">Real-time crime insights for Washington DC. Built for police, policymakers, and citizens who protect and serve.</p>
+  </header>
 
-    <header>
-        <h1><span class="highlight">CrimeWatch DC</span></h1>
-        <p class="subtitle-big">Empowering Safety. Enabling Action.</p>
-        <p class="subtitle-small">Real-time crime insights for Washington DC. Built for police, policymakers, and citizens who protect and serve.</p>
-      </header>
-      
   <section class="dashboard">
-
     <div class="top-section">
       <div class="map-container">
         <h2>Top 3 Most Dangerous Area</h2>
@@ -37,34 +40,74 @@
 
     <div class="bottom-section">
       <div class="info-card">
-        <h3 id="total-crimes">-</h3>
-        <p>Total Crimes</p>
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Total Crimes</p>
+        <h3 id="total-crimes" style="color: var(--primary); font-size: 28px;">-</h3>
       </div>
 
       <div class="info-card">
-        <h3 id="top-ward">-</h3>
-        <p>Most Dangerous Ward</p>
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Most Crimes (Total)</p>
+        <h3 style="color: var(--primary); font-size: 28px;">Ward 5</h3>
       </div>
 
       <div class="info-card">
-        <h3 id="top-offense">-</h3>
-        <p>Most Common Crime Type</p>
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Most Common Crime Type</p>
+        <h3 id="top-offense" style="color: var(--primary); font-size: 28px;">-</h3>
+      </div>
+
+      <div class="info-card">
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Highest Crime Density</p>
+        <h3 style="color: var(--primary); font-size: 28px;">Ward 2</h3>
+      </div>
+
+      <div class="info-card">
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Lowest Crime Density</p>
+        <h3 style="color: var(--primary); font-size: 28px;">Ward 3</h3>
+      </div>
+
+      <div class="info-card">
+        <p style="color: var(--text-light); font-weight: bold; font-size: 22px;">Most Dangerous Ward</p>
+        <h3 id="top-ward" style="color: var(--primary); font-size: 28px;">-</h3>
       </div>
     </div>
-
   </section>
 
   <section class="actions-section">
-    <h2>Take Action</h2>
-    <div class="action-buttons">
-      <a href="patrol.html" class="action-button">Patrol</a>
-      <a href="resource-allocation.html" class="action-button">Allocate Resources</a>
-      <a href="plan-visit.html" class="action-button">Check Your Visit</a>
-      <a href="crime-evolution.html" class="action-button">Crime Evolution</a>
+    <h2>Explore the Tools</h2>
+    <div class="tool-grid">
+      <div class="tool-wrapper left-hover">
+        <a href="patrol.html" class="tool-card">
+          🚓<span>Patrol</span>
+        </a>
+        <div class="tooltip left">View patrol zones & recommendations</div>
+      </div>
+  
+      <div class="tool-wrapper right-hover">
+        <a href="resource-allocation.html" class="tool-card">
+          📊<span>Allocate Resources</span>
+        </a>
+        <div class="tooltip right">Distribute policing resources based on data</div>
+      </div>
+  
+      <div class="tool-wrapper left-hover">
+        <a href="plan-visit.html" class="tool-card">
+          📍<span>Check Your Visit</span>
+        </a>
+        <div class="tooltip left">Assess safety of any address or attraction</div>
+      </div>
+  
+      <div class="tool-wrapper right-hover">
+        <a href="crime-evolution.html" class="tool-card">
+          📈<span>Crime Evolution</span>
+        </a>
+        <div class="tooltip right">Visualize crime trends over time</div>
+      </div>
     </div>
   </section>
   
- 
+  
+  
+  
+
   <footer>
     <p>© 2025 CrimeWatch DC – Built with ❤️</p>
   </footer>

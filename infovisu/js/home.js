@@ -59,6 +59,8 @@ legend.addTo(map);
 
 
 
+
+
 // Bar Chart
 let ctx = document.getElementById('district-chart').getContext('2d');
 
@@ -128,4 +130,25 @@ d3.csv("../data/crime_clean.csv").then(data => {
 
     document.getElementById("top-ward").textContent = `Ward ${mostDangerousWard}`;
     document.getElementById("top-offense").textContent = topOffense;
+
+    console.log("Ward Counts:", wardCounts);
+    console.log("Offense Counts:", offenseCounts);
+    console.log("Top Offense:", topOffense);
+
 });
+
+
+  window.addEventListener("scroll", () => {
+    const indicator = document.getElementById("scroll-indicator");
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+
+    // Hide if user is near bottom (within 50px)
+    if (scrollY + windowHeight >= docHeight - 50) {
+      indicator.classList.add("hidden");
+    } else {
+      indicator.classList.remove("hidden");
+    }
+  });
+
