@@ -90,7 +90,14 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
     });
   }
 
-
+  /*
+  function highlightHeatCalendar(months) {
+    const svg = d3.select("#daily-crime-chart-svg");
+  
+    svg.selectAll(".cell")
+      .attr("stroke", d => (months.includes(d.date.getMonth()) ? "#000" : null))
+      .attr("stroke-width", d => (months.includes(d.date.getMonth()) ? 2 : 0));
+  }*/
 
 function drawBarChart(filteredData) {
   const monthlyData = calculateMonthlyData(filteredData);
@@ -151,6 +158,29 @@ function drawBarChart(filteredData) {
     .on("mouseout", () => {
       d3.select("#timeline-tooltip").style("visibility", "hidden").style("opacity", 0);
     });
+
+    /*
+    // Add brushing
+  const brush = d3.brushX()
+  .extent([[margin.left, margin.top], [margin.left + width, margin.top + height]])
+  .on("brush end", event => {
+    const selection = event.selection;
+    if (selection) {
+      const [x0, x1] = selection;
+      const brushedMonths = monthlyData.filter(d => {
+        const x = xScale(d.date) + xScale.bandwidth() / 2;
+        return x >= x0 && x <= x1;
+      }).map(d => d.date.getMonth());
+      highlightHeatCalendar(brushedMonths);
+    } else {
+      highlightHeatCalendar([]); // Clear highlights if no selection
+    }
+  });
+
+  svg.append("g")
+    .attr("class", "brush")
+    .call(brush);
+    */
 }
 
 

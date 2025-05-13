@@ -27,6 +27,14 @@
         </div>
       </nav>
 
+
+<!-- Toggle button -->
+<div class="view-toggle">
+  <button id="toggle-view" class="cta-toggle-button">Switch to Trend View</button>
+</div>
+
+<!-- Patrol view -->
+<div id="patrol-view" style="display: block;">
 <header>
   <h1>CrimeWatch DC</h1>
   <p class="subtitle">Patrol Dashboard – Real-time Crime Heatmap and Zone Comparison</p>
@@ -98,8 +106,7 @@
           </div>
         </div>
       </div>
-      
-
+    </div>  
   </section>
 
   <section class="dynamic-chart-section">
@@ -140,18 +147,137 @@
           <!-- Populated dynamically -->
         </div>
       </div>
-  
     </div>
   </section>
-  
+ </main>
+</div>
 
+
+<!-- Trend view -->
+<div id="trend-view">
+
+  <!-- Crime Evolution View -->
+  <header>
+    <h1>CrimeWatch DC</h1>
+    <p class="subtitle-big">Crime Evolution in Washington DC – 2023</p>
+    <p class="subtitle-small">Explore how crime fluctuated over time by type, location and police shift</p>
+</header>
+
+<main>
+  <!-- section for the crime-count interactive dashboard -->
+  <section class="crime-evolution-dashboard">
+    <h2>Crime Evolution</h2>
+    <div class="dashboard-timeline-grid">
+      <div class="timeline-and-filters">
+
+        <div class="timeline-filter-panel">
+          <label for="offense-select">Offense Group:</label>
+          <select id="offense-monthly-select">
+            <option value="all">All Offenses</option>
+          </select>
   
+          <label for="method-select">Method:</label>
+          <select id="method-monthly-select">
+            <option value="all">All Methods</option>
+          </select>
+  
+          <label for="shift-select">Shift:</label>
+          <select id="shift-monthly-select">
+            <option value="all">All Shifts</option>
+          </select>
+  
+          <label for="district-select">District:</label>
+          <select id="district-monthly-select">
+            <option value="all">All Districts</option>
+          </select>
+  
+          <label for="ward-select">Ward:</label>
+          <select id="ward-monthly-select">
+            <option value="all">All Wards</option>
+          </select>
+        </div>
+
+        <div class="chart-and-heatmap-container">
+          <div class="chart-container">
+            <svg id="timeline-chart-svg"></svg>
+          </div>
+          <div class="heatmap-container">
+            <svg id="daily-crime-chart-svg"></svg>
+          </div>
+          <div id="timeline-tooltip" class="tooltip"></div>
+        </div>
+
+        <section class="day-of-week-chart-section">
+          <h2>Average Crimes by Day of the Week</h2>
+          <svg id="day-of-week-chart-svg" width="600" height="400"></svg>
+        </section>
+
+      </div>
+    </div>
+  </section>
+
 </main>
+</div>
+  
 
 <footer>
   <p>© 2025 CrimeWatch DC – Built with ❤️</p>
 </footer>
 
 <script src="../js/patrol.js"></script>
+<script>
+  const toggleButton = document.getElementById("toggle-view");
+  const patrolView = document.getElementById("patrol-view");
+  const trendView = document.getElementById("trend-view");
+
+  toggleButton.addEventListener("click", () => {
+    if (patrolView.style.display === "none") {
+      patrolView.style.display = "block";
+      trendView.style.display = "none";
+      toggleButton.textContent = "Switch to Trend View";
+    } else {
+      patrolView.style.display = "none";
+      trendView.style.display = "block";
+      toggleButton.textContent = "Switch to Patrol View";
+    }
+  });
+</script>
+
+<!-- Add this modal at the end of the body -->
+<div id="piechart-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span id="close-modal" class="close">&times;</span>
+    <h2>Detailed Crime View</h2>
+    <div class="content">
+      <div id="piechart-container">
+        <h3>Crimes by Offense Group</h3>
+        <svg id="piechart-svg" width="400" height="400"></svg>
+      </div> 
+      <div id="barchart-container">
+        <h3>Crimes by Shift</h3>
+        <svg id="barchart-svg" width="400" height="300"></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add this modal at the end of the body -->
+<div id="day-of-week-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span id="close-day-modal" class="close">&times;</span>
+    <h2>Detailed View for <span id="day-of-week-title"></span></h2>
+    <div class="content">
+      <div id="shift-barchart-container">
+        <h3>Average Crimes by Shift</h3>
+        <svg id="shift-barchart-svg" width="400" height="300"></svg>
+      </div>
+      <div id="offense-piechart-container">
+        <h3>Offense Group Distribution</h3>
+        <svg id="offense-piechart-svg" width="400" height="300"></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

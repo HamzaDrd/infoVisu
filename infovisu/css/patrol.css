@@ -110,6 +110,28 @@ body {
     padding: 6px 12px;
     font-size: 14px;
   }
+
+  .cta-toggle-button {
+    background-color: #ff4444;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    margin-left: 20px;
+    float: left; /* Ensures left-most placement */
+  }
+  
+  .cta-toggle-button:hover {
+    background-color: #ff6666;
+  }
+  
+  .cta-toggle-button.small {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
   
   .filter-panel {
     background: #1a1a1a;
@@ -310,5 +332,267 @@ body {
   header {
     margin-top: 20px;
   }
+
+
+  /* Trend view */
+  .subtitle-big {
+    font-size: 22px;
+    color: #eee;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  
+  .subtitle-small {
+    font-size: 16px;
+    color: #bbb;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .dashboard-timeline-grid {
+    display: flex;
+    gap: 20px; /* was 40px */
+    margin-top: 20px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .timeline-and-filters {
+    justify-content: center;   
+    align-items: center;
+        gap: 20px;
+        margin-top: 20px;
+        flex-grow: 1;
+        flex-direction: column-reverse;
+    > svg {
+      height: 500px;
+    }
+  }
+
+  .tooltip {
+    position: absolute;
+    text-align: left;
+    padding: 8px;
+    font-size: 14px;
+    background: rgba(0,0,0,0.75);
+    color: white;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .timeline-filter-panel {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  
+      > label {
+        display: block;;
+      }
+  
+      select {
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        padding: 8px;
+        border-radius: 8px;
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+  
+      }
+  }
+
+  .heatcalendar-filter-panel {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    justify-content: center;
+  
+      > label {
+        display: block;;
+      }
+  
+      select {
+        width: 100%;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        padding: 8px;
+        border-radius: 8px;
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+  
+      }
+  }
+
+  .chart-and-heatmap-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+    flex-grow: 1;
+  }
+
+  .chart-container, .heatmap-container {
+    flex: 1;
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Modal styles */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+  background-color: #1a1a1a;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 70%;
+  max-width: 900px;
+  text-align: center;
+  color: #eee;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #ff4444;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  justify-content: space-around; /* Space out the charts */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+#piechart-container,
+#barchart-container {
+  flex: 1 1 300px; /* Ensure both charts take equal space */
+  max-width: 400px; /* Limit the maximum width of each chart */
+}
+
+#piechart-svg,
+#barchart-svg {
+  width: 100%; /* Make the SVG responsive */
+  height: auto; /* Maintain aspect ratio */
+}
+
+.day-of-week-chart-section {
+  margin: 20px auto;
+  text-align: center;
+  color: #eee;
+}
+
+#day-of-week-chart-svg {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+/* Modal for Day-of-Week Chart */
+#day-of-week-modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#day-of-week-modal .modal-content {
+  background-color: #1a1a1a;
+  margin: 5% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 70%;
+  max-width: 900px;
+  text-align: center;
+  color: #eee;
+}
+
+#day-of-week-modal .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#day-of-week-modal .close:hover,
+#day-of-week-modal .close:focus {
+  color: #ff4444;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#day-of-week-modal .content {
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  justify-content: space-around; /* Space out the charts */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+#shift-barchart-container,
+#offense-piechart-container {
+  flex: 1 1 300px; /* Ensure both charts take equal space */
+  max-width: 400px; /* Limit the maximum width of each chart */
+}
+
+#shift-barchart-svg,
+#offense-piechart-svg {
+  width: 100%; /* Make the SVG responsive */
+  height: auto; /* Maintain aspect ratio */
+}
+
 
   
