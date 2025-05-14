@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Community Lens</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <link rel="stylesheet" href="../css/community.css" />
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="home.html" class="nav-logo">CrimeWatch DC</a>
+    </div>
+    <div class="nav-right">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="#" class="nav-link">Check Your Visit</a>
+    </div>
+  </nav>
+
+  <header>
+    <h1>Community Lens</h1>
+    <p>Compare crime trends across DC’s neighborhoods using ANC-level data.</p>
+  </header>
+
+  <main class="lens-container">
+    <!-- Dropdown Filters -->
+    <div class="lens-controls">
+      <label for="anc-select-1">ANC A:</label>
+      <select id="anc-select-1"><option value="all">All</option></select>
+
+      <label for="anc-select-2">ANC B:</label>
+      <select id="anc-select-2"><option value="all">All</option></select>
+    </div>
+
+    <!-- Bar Charts -->
+    <div class="lens-chart-compare">
+      <div>
+        <h3>Top Crime Types in <span id="label-bar-a">ANC A</span></h3>
+        <svg id="bar-chart-a" width="600" height="400"></svg>
+      </div>
+      <div>
+        <h3>Top Crime Types in <span id="label-bar-b">ANC B</span></h3>
+        <svg id="bar-chart-b" width="600" height="400"></svg>
+      </div>
+    </div>
+
+    <!-- Heatmap Grids -->
+    <div class="lens-grid-compare">
+      <div>
+        <h3>Crime Severity by Census Tract – <span id="label-grid-a">ANC A</span></h3>
+        <svg id="severity-grid-a" width="600" height="400"></svg>
+      </div>
+      <div>
+        <h3>Crime Severity by Census Tract – <span id="label-grid-b">ANC B</span></h3>
+        <svg id="severity-grid-b" width="600" height="400"></svg>
+      </div>
+    </div>
+
+    <!-- Shared Legend -->
+    <div class="legend">
+      <span>Low</span>
+      <div class="legend-scale"></div>
+      <span>High</span>
+    </div>
+
+    <!-- Explanation -->
+    <p class="grid-explanation">
+        The two heatmaps above show the <strong>crime severity distribution</strong> across the top census tracts within each selected ANC.
+        Each row represents a <strong>census tract</strong> (a small geographic neighborhood zone), and each column corresponds to a <strong>UCR severity level</strong>:
+        <strong>1 = most severe</strong>, <strong>5 = least severe</strong>.
+        <br><br>
+        The numbers inside the cells indicate how many crimes of that severity occurred in that tract. Darker red cells represent higher crime volume.
+        <br><br>
+        Use this visual to compare how serious crimes are distributed between the two selected ANCs.
+      </p>
+
+
+      
+      <!-- Second ANC selection for time + method charts -->
+<div class="lens-controls">
+    <label for="anc-select-time-1">Compare ANC A (Time/Method):</label>
+    <select id="anc-select-time-1"><option value="all">All</option></select>
+  
+    <label for="anc-select-time-2">Compare ANC B (Time/Method):</label>
+    <select id="anc-select-time-2"><option value="all">All</option></select>
+  </div>
+  
+
+      <div class="lens-chart-compare">
+        <div>
+            <h3>Crime Over Time in <span id="label-line-a">ANC A</span></h3>
+            <svg id="line-chart-a" width="100%" height="400"></svg>
+        </div>
+        <div>
+            <h3>Crime Over Time in <span id="label-line-b">ANC B</span></h3>
+            <svg id="line-chart-b" width="100%" height="400"></svg>
+        </div>
+      </div>
+      
+      <div class="lens-chart-compare">
+        <div>
+            <h3>Offense Type by Method in <span id="label-method-a">ANC A</span></h3>
+            <svg id="method-chart-a" width="100%" height="400"></svg>
+        </div>
+        <div>
+            <h3>Offense Type by Method in <span id="label-method-b">ANC B</span></h3>
+            <svg id="method-chart-b" width="100%" height="400"></svg>
+        </div>
+      </div>
+
+      <div class="method-legend-container">
+        <h4>Method Legend</h4>
+        <div id="method-legend" class="method-legend"></div>
+      </div>
+      
+      
+      <!-- Legend or explanation section if needed -->
+      <p class="chart-explanation">
+        <strong>Crime Over Time</strong> shows how incident counts change month to month in each ANC.<br>
+        <strong>Offense Type by Method</strong> breaks down top crime types by method used (e.g., gun, knife, unknown).
+      </p>
+  </main>
+
+  <script src="../js/community-lens.js"></script>
+</body>
+</html>

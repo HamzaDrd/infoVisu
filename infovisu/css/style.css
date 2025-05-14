@@ -399,3 +399,32 @@ footer {
 .hidden {
   display: none;
 }
+
+  /* Navigation Bar */
+  .navbar {
+    background-color: #1a1a1a;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 30px;
+  }
+  
+  .nav-logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff4444;
+    text-decoration: none;
+  }
+  
+  .nav-right .nav-link {
+    margin-left: 20px;
+    color: #eee;
+    text-decoration: none;
+    font-size: 16px;
+    transition: color 0.3s;
+  }
+  
+  .nav-right .nav-link:hover {
+    color: #ff4444;
+  }
+

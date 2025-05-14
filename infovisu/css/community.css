@@ -1,0 +1,211 @@
+/* === COMMUNITY LENS STYLES === */
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  font-family: 'Arial', sans-serif;
+}
+
+header {
+  text-align: center;
+  margin: 40px 0 20px;
+}
+
+header h1 {
+  color: var(--primary);
+  font-size: 40px;
+  margin-bottom: 10px;
+}
+
+header p {
+  color: #bbb;
+  font-size: 18px;
+}
+
+.lens-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.lens-controls {
+  background-color: var(--panel-dark);
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lens-controls label {
+  font-weight: bold;
+  margin-right: 8px;
+  color: var(--text-light);
+}
+
+.lens-controls select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #2a2a2a;
+  color: var(--text-light);
+  font-size: 14px;
+}
+
+/* === Side-by-Side Layouts (Expanded + Flush) === */
+
+.lens-chart-compare,
+.lens-grid-compare {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 20px; /* remove spacing between them */
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.lens-chart-compare > div,
+.lens-grid-compare > div {
+  background-color: var(--panel-dark);
+  padding: 30px 20px 40px; /* top, sides, bottom */
+  border-radius: 12px;
+  flex: 1;
+  max-width: 50%;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: 500px; /* <-- this is the key line */
+}
+
+svg {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+
+
+
+/* === Headings === */
+
+.lens-chart-compare h3,
+.lens-grid-compare h3 {
+  text-align: center;
+  color: var(--primary);
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* === Shared Legend & Explanation === */
+
+.legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+
+.legend-scale {
+  height: 15px;
+  width: 200px;
+  background: linear-gradient(to right, #fff5eb, #7f0000); /* match d3.interpolateOrRd */
+  border-radius: 5px;
+}
+
+.grid-explanation {
+  color: #aaa;
+  font-size: 14px;
+  max-width: 800px;
+  margin: 10px auto 60px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* === Axis Label Style (Optional) === */
+
+.axis-label {
+  font-size: 14px;
+  fill: #ccc;
+  font-weight: bold;
+}
+
+/* === Responsive === */
+
+@media screen and (max-width: 900px) {
+  .lens-chart-compare,
+  .lens-grid-compare {
+    flex-direction: column;
+  }
+}
+
+
+.grid-explanation {
+  text-align: center;
+  color: #ccc;
+  max-width: 900px;
+  margin: 20px auto;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+.chart-container {
+  background-color: var(--panel-dark);
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+  max-width: 50%;
+  box-sizing: border-box;
+  overflow: hidden;
+  min-height: 460px;
+}
+
+.lens-chart-compare {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.chart-explanation {
+  text-align: center;
+  color: #ccc;
+  max-width: 900px;
+  margin: 20px auto;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+
+.method-legend-container {
+  text-align: center;
+  margin-top: -20px;
+  margin-bottom: 40px;
+  color: #ccc;
+}
+
+.method-legend {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.method-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
+.method-legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: inline-block;
+}
