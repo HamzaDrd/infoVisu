@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>CrimeWatch DC – Nieuwe Pagina</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Shared stylesheet for consistent styling with other pages -->
+  <link rel="stylesheet" href="../css/reports.css" />
+
+  <!-- Optional libraries: Leaflet (maps), Chart.js (graphs), D3 (data) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="../js/reports.js"></script>
+</head>
+
+<body>
+
+  <!-- === NAVIGATION BAR === -->
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="home.html" class="nav-logo">CrimeWatch DC</a>
+    </div>
+    <div class="nav-right">
+      <a href="home.html" class="nav-link">Home</a>
+      <a href="patrol.html" class="nav-link">Patrol</a>
+      <a href="crime-evolution.html" class="nav-link">Evolution</a>
+      <a href="plan-visit.html" class="nav-link">Check Your Visit</a>
+    </div>
+  </nav>
+
+  <!-- === PAGE INTRO HEADER === -->
+  <header>
+    <h1><span class="highlight">CrimeWatch DC</span></h1>
+    <p class="subtitle-big">Discover the top 10 fastest-reporting neighborhoods in DC.</p>
+    <p class="subtitle-small">Quick reporting means safer streets, stronger communities, and smarter response.</p>
+  </header>
+
+  <!-- === MAIN DASHBOARD CONTENT === -->
+  <main class="dashboard">
+
+    <!-- Top banner with logo, title and time range -->
+    <div class="page-banner">
+      <div class="banner-info">
+        <img src="../images/DC-flag.svg" class="flag-icon" />
+        <div class="banner-title">
+          <h2>Washington DC</h2>
+          <span>Crime Report Rankings 2023</span>
+        </div>
+      </div>
+      <div class="banner-title-block">
+        <h1>🏆 Top 10 – Fastest Reported Neighborhoods</h1>
+        <div class="date-range-bar">
+          <span class="date-label">1 Jan</span>
+          <div class="bar"></div>
+          <span class="date-label">31 Dec</span>
+        </div>
+      </div>
+    </div>    
+
+    <!-- Three-column layout: Legend | Leaderboard | Filters -->
+    <div class="dashboard-content">
+
+      <!-- === LEFT: INFO LEGEND PANEL === -->
+      <aside class="info-panel">
+        <div class="legend-section">
+          <div class="legend-subtitle">ART</div>
+          <p>Average Reporting Time (in hours)</p>
+        </div>
+
+        <div class="legend-section">
+          <div class="legend-subtitle">Recent 5 months</div>
+          <p>Monthly performance colors:</p>
+          <ul>
+            <li>🟩 Fast &lt; 20 hours</li>
+            <li>🟨 Moderate 20–30 hours</li>
+            <li>🟥 Slow &gt; 30 hours</li>
+          </ul>
+        </div>
+
+        <div class="legend-section">
+          <div class="legend-subtitle">Trend</div>
+          <p>Ranking evolution vs. last month:</p>
+          <ul>
+            <li>🔼 Improved</li>
+            <li>🔽 Dropped</li>
+            <li>➖ Stable</li>
+          </ul>
+        </div>
+
+        <div class="legend-section">
+          <div class="legend-subtitle">Reports</div>
+          <p>Total crime reports submitted in 2023</p>
+        </div>
+
+        <div class="legend-section">
+          <p style="font-size: 0.75rem; color: #999;">
+            This leaderboard highlights the 10 fastest-reporting neighborhoods in Washington DC (Jan–Dec 2023). Fast reporting indicates active communities and better emergency responsiveness.
+          </p>
+        </div>
+      </aside>
+
+      <!-- === CENTER: LEADERBOARD OUTPUT === -->
+      <div class="main-content">
+        <div class="chart-container">
+          <section class="container">
+            <div class="leaderboard-header">
+              <div>#</div>
+              <div>Neighborhood</div>
+              <div>ART</div>
+              <div>Recent 5 months</div>
+              <div>Trend</div>
+              <div>Reports</div>
+            </div>
+            <ul class="leaderboard-extended" id="leaderboard">
+              <!-- Leaderboard rows inserted here dynamically via JS -->
+            </ul>
+          </section>
+        </div>
+      </div>
+
+      <!-- === RIGHT: FILTER TILE PANEL === -->
+      <aside class="filter-section">
+
+        <!-- Filter 1: Crime Type -->
+        <h3>Filter Crime Type</h3>
+        <div class="tile-group" data-filter="crime_type">
+          <div class="filter-tile" data-value="violent">🔴 Violent</div>
+          <div class="filter-tile" data-value="property">🔵 Property</div>
+          <div class="filter-tile" data-value="others">🟡 Others</div>
+        </div>
+
+        <!-- Filter 2: Shift -->
+        <h3>Filter Shift</h3>
+        <div class="tile-group" data-filter="shift">
+          <div class="filter-tile" data-value="day">🌞 Day</div>
+          <div class="filter-tile" data-value="evening">🌙 Evening</div>
+          <div class="filter-tile" data-value="midnight">🌘 Midnight</div>
+        </div>
+
+        <!-- Filter 3: Weapon -->
+        <h3>Filter Weapon</h3>
+        <div class="tile-group" data-filter="weapon">
+          <div class="filter-tile" data-value="gun">🔫 Gun</div>
+          <div class="filter-tile" data-value="knife">🔪 Knife</div>
+          <div class="filter-tile" data-value="none">👊 None</div>
+          <div class="filter-tile" data-value="other">🧨 Other</div>
+        </div>
+
+
+        <!-- Confirm Button -->
+        <button id="apply-filters">✔️ Confirm</button>
+      </aside>
+
+    </div> <!-- end .dashboard-content -->
+  </main>
+
+  <!-- === FOOTER === -->
+  <footer>
+    <p>© 2025 CrimeWatch DC – Built with ❤️</p>
+  </footer>
+
+</body>
+</html>
