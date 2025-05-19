@@ -27,7 +27,7 @@
   </header>
 
   <main class="lens-container">
-    <!-- Dropdown Filters -->
+    <!-- filters -->
     <div class="lens-controls">
       <label for="anc-select-1">ANC A:</label>
       <select id="anc-select-1"><option value="all">All</option></select>
@@ -36,7 +36,7 @@
       <select id="anc-select-2"><option value="all">All</option></select>
     </div>
 
-    <!-- Bar Charts -->
+    <!-- bar -->
     <div class="lens-chart-compare">
       <div>
         <h3>Top Crime Types in <span id="label-bar-a">ANC A</span></h3>
@@ -48,7 +48,7 @@
       </div>
     </div>
 
-    <!-- Heatmap Grids -->
+    <!-- heatmap -->
     <div class="lens-grid-compare">
       <div>
         <h3>Crime Severity by Census Tract – <span id="label-grid-a">ANC A</span></h3>
@@ -60,14 +60,13 @@
       </div>
     </div>
 
-    <!-- Shared Legend -->
+    <!-- legend -->
     <div class="legend">
       <span>Low</span>
       <div class="legend-scale"></div>
       <span>High</span>
     </div>
 
-    <!-- Explanation -->
     <p class="grid-explanation">
         The two heatmaps above show the <strong>crime severity distribution</strong> across the top census tracts within each selected ANC.
         Each row represents a <strong>census tract</strong> (a small geographic neighborhood zone), and each column corresponds to a <strong>UCR severity level</strong>:
@@ -80,7 +79,7 @@
 
 
       
-      <!-- Second ANC selection for time + method charts -->
+      <!-- time + method charts -->
 <div class="lens-controls">
     <label for="anc-select-time-1">Compare ANC A (Time/Method):</label>
     <select id="anc-select-time-1"><option value="all">All</option></select>
@@ -118,7 +117,7 @@
       </div>
       
       
-      <!-- Legend or explanation section if needed -->
+      <!-- legend -->
       <p class="chart-explanation">
         <strong>Crime Over Time</strong> shows how incident counts change month to month in each ANC.<br>
         <strong>Offense Type by Method</strong> breaks down top crime types by method used (e.g., gun, knife, unknown).
