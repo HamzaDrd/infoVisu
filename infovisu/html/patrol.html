@@ -32,7 +32,7 @@
   </nav>
 
 
-<!-- Toggle button -->
+<!-- Toggle button between evolution and patrol view -->
 <div class="view-toggle">
   <button id="toggle-view" class="cta-toggle-button">Switch to Trend View</button>
 </div>
@@ -118,14 +118,14 @@
   
     <div class="drag-drop-grid">
   
-      <!-- Left Y variables -->
+      <!--  y axe  -->
       <div class="y-variable-pool">
         <h3>Y Variables</h3>
         <div class="draggable" draggable="true" data-type="y">Offense Group</div>
         <div class="draggable" draggable="true" data-type="y">Number of Crimes</div>
       </div>
   
-      <!-- Center Chart -->
+      <!-- middle part -->
       <div class="chart-center-area">
         <canvas id="psa-chart" width="800" height="500"></canvas>
         <p id="chart-hint" style="color: #888; font-size: 16px; text-align: center; margin-top: 10px;">
@@ -143,12 +143,11 @@
         </div>
       </div>
   
-      <!-- Right PSA list -->
+      <!-- psa part -->
       <div class="psa-pool">
         <h3>Select PSA</h3>
         <input type="text" id="psa-search" placeholder="Search PSA..." />
         <div id="psa-list">
-          <!-- Populated dynamically -->
         </div>
       </div>
     </div>
@@ -247,7 +246,6 @@
   });
 </script>
 
-<!-- Add this modal at the end of the body -->
 <div id="piechart-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span id="close-modal" class="close">&times;</span>
@@ -265,7 +263,6 @@
   </div>
 </div>
 
-<!-- Add this modal at the end of the body -->
 <div id="day-of-week-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span id="close-day-modal" class="close">&times;</span>
