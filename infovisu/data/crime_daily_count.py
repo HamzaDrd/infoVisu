@@ -23,7 +23,7 @@ df_clean['day_of_week'] = df_clean['date'].dt.day_name()
 # Group by date and additional attributes, count number of crimes
 daily_crime_counts = (
     df_clean
-    .groupby(['date', 'year', 'month', 'day_of_week', 'offense', 'offense_group', 'method', 'shift', 'district', 'ward'])
+    .groupby(['date', 'year', 'month', 'day_of_week', 'offense', 'offense_group', 'offensekey', 'method', 'shift', 'district', 'ward'])
     .size()
     .reset_index(name='count')
 )

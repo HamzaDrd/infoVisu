@@ -38,7 +38,7 @@
 </div>
 
 <!-- Patrol view -->
-<div id="patrol-view" style="display: block;">
+<div id="patrol-view">
 <header>
   <h1>CrimeWatch DC</h1>
   <p class="subtitle">Patrol visu – Real-time Crime Heatmap and Zone Comparison</p>
@@ -179,19 +179,9 @@
             <option value="all">All Offenses</option>
           </select>
   
-          <label for="method-select">Method:</label>
-          <select id="method-monthly-select">
-            <option value="all">All Methods</option>
-          </select>
-  
           <label for="shift-select">Shift:</label>
           <select id="shift-monthly-select">
             <option value="all">All Shifts</option>
-          </select>
-  
-          <label for="district-select">District:</label>
-          <select id="district-monthly-select">
-            <option value="all">All Districts</option>
           </select>
   
           <label for="ward-select">Ward:</label>
@@ -210,12 +200,13 @@
           <div id="timeline-tooltip" class="tooltip"></div>
         </div>
 
-        <section class="day-of-week-chart-section">
-          <h2>Average Crimes by Day of the Week</h2>
-          <svg id="day-of-week-chart-svg" width="600" height="400"></svg>
-        </section>
-
       </div>
+
+      <div class="day-of-week-chart-section">
+        <h2>Average Crimes by Day of the Week</h2>
+        <svg id="day-of-week-chart-svg" width="600" height="400"></svg>
+      </div>
+
     </div>
   </section>
 
@@ -228,6 +219,7 @@
 </footer>
 
 <script src="../js/patrol.js"></script>
+<!--
 <script>
   const toggleButton = document.getElementById("toggle-view");
   const patrolView = document.getElementById("patrol-view");
@@ -242,27 +234,96 @@
       patrolView.style.display = "none";
       trendView.style.display = "block";
       toggleButton.textContent = "Switch to Patrol View";
+
+      // Trigger rendering of visualizations after making the trend-view visible
+      setTimeout(() => {
+        drawBarChartWithFilters();
+        drawHeatCalendarWithFilters();
+        drawDayOfWeekChart(data);
+      }, 0);
     }
   });
 </script>
+-->
 
-<div id="piechart-modal" class="modal" style="display: none;">
+<!-- Detailed view for monthly barchart-->
+<div id="crime-type-modal" class="modal" style="display: none;">
   <div class="modal-content">
-    <span id="close-modal" class="close">&times;</span>
-    <h2>Detailed Crime View</h2>
-    <div class="content">
-      <div id="piechart-container">
-        <h3>Crimes by Offense Group</h3>
-        <svg id="piechart-svg" width="400" height="400"></svg>
-      </div> 
-      <div id="barchart-container">
-        <h3>Crimes by Shift</h3>
-        <svg id="barchart-svg" width="400" height="300"></svg>
+    <span id="close-crime-type-modal" class="close">&times;</span>
+    <h2>Detailed View for <span id="modal-month-title"></span></h2>
+    <div class="detailed-view-content">
+      <div class="detailed-upper-section">
+        <div id="crime-type-piechart-container" >
+          <h3>Crime Type Distribution</h3>
+          <p class="subtitle-small">The distribution of crimes over offense-group</p>
+          <div class="detailed-chart-container">
+            <svg id="crime-type-piechart-svg" width="300" height="300"></svg>
+          </div>
+        </div>
+        <div id="shift-barchart-container">
+          <h3>Shift Distribution</h3>
+          <p class="subtitle-small">The distribution of crimes over shifts</p>
+          <div class="detailed-chart-container">
+            <svg id="shift-barchart-svg" width="300" height="300"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="detailed-lower-section">
+        <div id="weekly-trend-container">
+          <h3>Weekly Trend</h3>
+          <p class="subtitle-small">The distribution of crimes on a weekly basis of the selected month</p>
+          <div class="detailed-chart-container">
+            <svg id="weekly-trend-svg" width="400" height="300"></svg>
+          </div>
+        </div>
+        <div id="top-wards-container">
+          <h3>Top 5 Wards</h3>
+          <p class="subtitle-small">The wards with the highest crime counts in the selected month</p>
+          <div class="detailed-chart-container">
+            <svg id="top-wards-svg" width="400" height="300"></svg>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Detailed view for heat-calendar -->
+<div id="piechart-modal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span id="close-modal" class="close">&times;</span>
+    <h2>Detailed Crime View for <span id="modal-day-title"></span></h2>
+    <div class="detailed-view-content">
+      <div class="detailed-upper-section">
+        <div id="piechart-container">
+          <h3>Crimes by Offense Group</h3>
+          <p class="subtitle-small">The distribution of crimes over offense groups</p>
+          <div class="detailed-chart-container">
+            <svg id="piechart-svg" width="300" height="300"></svg>
+          </div>
+        </div>
+        <div id="barchart-container">
+          <h3>Shift Distribution</h3>
+          <p class="subtitle-small">The distribution of crimes over shifts</p>
+          <div class="detailed-chart-container">
+            <svg id="barchart-svg" width="300" height="300"></svg>
+          </div>
+        </div>
+      </div>
+      <div class="detailed-lower-section">
+        <div id="method-barchart-container">
+          <h3>Crimes by Offensekey</h3>
+          <p class="subtitle-small">The distribution of crimes by offensekey</p>
+          <div class="detailed-chart-container">
+            <svg id="method-barchart-svg" width="700" height="400"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed view for day-of-week chart -->
 <div id="day-of-week-modal" class="modal" style="display: none;">
   <div class="modal-content">
     <span id="close-day-modal" class="close">&times;</span>
