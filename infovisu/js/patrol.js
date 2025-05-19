@@ -31,6 +31,7 @@ function populateDropdown(selectElement, values) {
   });
 }
 
+// update markers/heatmap
 function updateMap() {
   markers.forEach(m => map.removeLayer(m));
   markers = [];
@@ -47,6 +48,7 @@ function updateMap() {
   const selectedDistrict = districtSelect.value;
   const selectedWard = wardSelect.value;
 
+// filter 
   const filtered = allData.filter(d => {
     return (
       (selectedOffense === "all" || d.offense_group === selectedOffense) &&
@@ -89,7 +91,6 @@ function updateMap() {
   }
 }
 
-// Init map
 initMap();
 
 d3.csv("../data/crime_clean.csv").then(data => {
@@ -110,6 +111,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
   const districts = Array.from(new Set(data.map(d => d.district))).sort();
   const wards = Array.from(new Set(data.map(d => d.ward))).sort();
 
+  //dropdowns
   populateDropdown(methodSelect, methods);
   populateDropdown(districtSelect, districts);
   populateDropdown(wardSelect, wards);
@@ -124,6 +126,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
   districtSelect.addEventListener("change", updateMap);
   wardSelect.addEventListener("change", updateMap);
 
+  // heatmap
   heatButton.addEventListener("click", () => {
     isHeatmapVisible = !isHeatmapVisible;
     heatButton.textContent = isHeatmapVisible ? "Show Pins" : "Show Heatmap";
@@ -143,7 +146,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
     updateMap();
   });
 
-  // Static little maps
+  //  map
   function createStaticMap(containerId, lat, lon) {
     const mini = L.map(containerId, {
       center: [lat, lon],
@@ -170,10 +173,9 @@ d3.csv("../data/crime_clean.csv").then(data => {
   createStaticMap("map-least", 38.83, -76.99);
 });
 
-// Wait for page DOM to fully load before running
 window.addEventListener("DOMContentLoaded", () => {
 
-    // Load PSA list
+    // PSA list
     d3.csv("../data/psa_crime.csv").then(data => {
       const psaList = Array.from(new Set(data.map(d => d.psa)))
         .map(psa => parseInt(psa))
@@ -181,7 +183,6 @@ window.addEventListener("DOMContentLoaded", () => {
     
       const psaContainer = document.getElementById("psa-list");
   
-      // Create buttons but don't append yet
       const psaElements = psaList.map(psa => {
         const div = document.createElement("div");
         div.className = "draggable";
@@ -190,7 +191,6 @@ window.addEventListener("DOMContentLoaded", () => {
         div.setAttribute("data-psa", psa);
         div.setAttribute("data-type", "psa");
       
-        // ADD THIS:
         div.addEventListener("dragstart", (e) => {
           e.dataTransfer.setData("text", div.textContent.trim());
           e.dataTransfer.setData("type", div.dataset.type || "psa");
@@ -200,21 +200,19 @@ window.addEventListener("DOMContentLoaded", () => {
       });
       
       
-  
-      // Append only first 5 initially
       psaElements.slice(0, 5).forEach(el => psaContainer.appendChild(el));
   
       const searchInput = document.getElementById("psa-search");
   
       searchInput.addEventListener("input", function () {
         const searchValue = this.value.trim().toLowerCase();
-        psaContainer.innerHTML = ""; // Clear all
+        psaContainer.innerHTML = ""; 
   
         const filtered = psaElements.filter(el =>
           el.textContent.toLowerCase().includes(searchValue)
         );
   
-        filtered.slice(0, 10).forEach(el => psaContainer.appendChild(el)); // Max 10 visible
+        filtered.slice(0, 10).forEach(el => psaContainer.appendChild(el)); 
       });
     });
   
@@ -239,8 +237,8 @@ window.addEventListener("DOMContentLoaded", () => {
               ticks: { color: '#ccc' },
               grid: { color: '#444' },
               stacked: false,
-              barPercentage: 0.6,        // <-- make bars narrower
-              categoryPercentage: 0.6    // <-- leave space between groups
+              barPercentage: 0.6,        
+              categoryPercentage: 0.6    
             },
             y: {
               title: { display: true, text: 'Y Axis', color: '#eee' },
@@ -258,7 +256,7 @@ window.addEventListener("DOMContentLoaded", () => {
     let selectedY = null;
     let selectedPSAs = [];
   
-    // Make everything draggable
+    //  drag
     function refreshDraggables() {
       document.querySelectorAll(".draggable").forEach(el => {
         el.addEventListener("dragstart", (e) => {
@@ -267,9 +265,9 @@ window.addEventListener("DOMContentLoaded", () => {
         });
       });
     }
-    refreshDraggables(); // initial
+    refreshDraggables(); 
   
-    // Drag and Drop handling
+    // Drag + drop 
     dropArea.addEventListener("dragover", (e) => {
       e.preventDefault();
       dropArea.style.border = "2px dashed #ff4444";
@@ -312,21 +310,21 @@ window.addEventListener("DOMContentLoaded", () => {
         if (selectedX && selectedY && selectedPSAs.length > 0) {
           hint.style.display = "none";
       
-          // Set labels depending on selectedX
+          // set labels 
           let xLabels = [];
       
           if (selectedX.toLowerCase() === "shift") {
             xLabels = ["Day", "Evening", "Midnight"];
           } else if (selectedX.toLowerCase() === "method") {
-            xLabels = ["Gun", "Knife", "Others"]; // adjust based on your data
+            xLabels = ["Gun", "Knife", "Others"]; 
           } else if (selectedX.toLowerCase() === "month") {
             xLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
           } else if (selectedX.toLowerCase() === "day of week") {
             xLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
           } else if (selectedX.toLowerCase() === "year") {
-            xLabels = ["2020", "2021", "2022", "2023", "2024"]; // or extract dynamically
+            xLabels = ["2020", "2021", "2022", "2023", "2024"]; 
           } else {
-            xLabels = selectedPSAs; // fallback
+            xLabels = selectedPSAs;
           }
       
           psaChart.data.labels = xLabels;
@@ -334,10 +332,10 @@ window.addEventListener("DOMContentLoaded", () => {
           psaChart.options.scales.x.title.text = selectedX;
           psaChart.options.scales.y.title.text = selectedY;
       
-          // Dummy data
+          //dummy data
           psaChart.data.datasets = selectedPSAs.map((psa, i) => ({
             label: `PSA ${psa}`,
-            data: xLabels.map(() => Math.floor(Math.random() * 100)), // Replace with real filtered logic
+            data: xLabels.map(() => Math.floor(Math.random() * 100)), 
             backgroundColor: ["#ff4444", "#ff8844", "#44c2ff", "#44ff88", "#ff44dd"][i % 5]
           }));
       

@@ -1,4 +1,4 @@
-// plan-visit.js - FINAL updated version
+// plan-visit.js 
 
 let places = [];
 let crimeData = [];
@@ -13,6 +13,7 @@ Promise.all([
   populateDropdowns();
 });
 
+// fill ward + place dropdowns
 function populateDropdowns() {
   const wardSet = new Set(crimeData.map(d => d.ward));
   const wardSelect = document.getElementById("ward-select");
@@ -36,6 +37,7 @@ function populateDropdowns() {
   placeSelect.addEventListener("change", showPlaceInfo);
 }
 
+// ward selected
 function showWardInfo() {
   const ward = document.getElementById("ward-select").value;
   if (!ward) return;
@@ -61,7 +63,8 @@ function showWardInfo() {
     }
   });
 
-  if (!foundAny) {
+    // no crime nearby
+if (!foundAny) {
     const message = document.createElement("div");
     message.className = "no-data-message";
     message.innerHTML = `
@@ -72,7 +75,8 @@ function showWardInfo() {
   }
 }
 
-function showPlaceInfo() {
+// place selected
+ function showPlaceInfo() {
   const placeName = document.getElementById("place-select").value;
   if (!placeName) return;
 
@@ -87,6 +91,7 @@ function showPlaceInfo() {
   }
 }
 
+// result card
 function createResultBlock(place, ward) {
   const block = document.createElement("div");
   block.className = "result-block";
@@ -104,7 +109,6 @@ function createResultBlock(place, ward) {
   let crimeMarker = null;
 
   if (insideDC) {
-    // Nearest recent crime (2km)
     let nearbyCrimes = crimeData.filter(d => {
       if (!d.latitude || !d.longitude) return false;
       const dist = haversine(place.latitude, place.longitude, +d.latitude, +d.longitude);
@@ -115,6 +119,7 @@ function createResultBlock(place, ward) {
       nearbyCrimes = nearbyCrimes.filter(d => d.ward === ward);
     }
 
+        // recent crime
     nearbyCrimes.sort((a, b) => new Date(b.report_date) - new Date(a.report_date));
     const closestRecentCrime = nearbyCrimes[0];
 
@@ -130,13 +135,13 @@ function createResultBlock(place, ward) {
       };
     } else {
       cautionHtml += `
-        <h4 class="safe-text">✅ No recent incidents nearby</h4>
+        <h4 class="safe-text">No recent incidents nearby</h4>
         <p style="font-size: 14px;">Stay alert and enjoy your visit safely!</p>
       `;
     }
 
-    // Most common crime (3km)
-    let crimes3km = crimeData.filter(d => {
+        // top offense 
+let crimes3km = crimeData.filter(d => {
       if (!d.latitude || !d.longitude) return false;
       const dist = haversine(place.latitude, place.longitude, +d.latitude, +d.longitude);
       return dist < 3.0;
@@ -161,7 +166,7 @@ function createResultBlock(place, ward) {
       const topOffenseGroup = sortedOffenses[0][0];
       const topGroupCount = sortedOffenses[0][1];
 
-      // Find most common offense_text (inside the same 3km)
+      // top offense type
       const offenseTypeCounts = {};
       crimes3km.forEach(d => {
         if (d.offense_group === topOffenseGroup) {
@@ -206,7 +211,8 @@ function createResultBlock(place, ward) {
   block.appendChild(text);
   block.appendChild(mapDiv);
 
-  const miniMap = L.map(mapDiv, {
+    // mini map
+const miniMap = L.map(mapDiv, {
     zoomControl: false,
     dragging: false,
     scrollWheelZoom: false,
@@ -220,6 +226,7 @@ function createResultBlock(place, ward) {
 
   L.marker([place.latitude, place.longitude]).addTo(miniMap);
 
+  // red dit
   if (crimeMarker) {
     const redIcon = L.icon({
       iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
@@ -252,9 +259,6 @@ function createResultBlock(place, ward) {
 
   return block;
 }
-
-
-
 
 function haversine(lat1, lon1, lat2, lon2) {
   const R = 6371; // Earth radius in km

@@ -2,14 +2,13 @@
 
 let map = L.map('danger-map').setView([38.91, -77.02], 12);
 
-
-// OpenStreetMap tiles
+//  OpenStreetMap 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors'
 }).addTo(map);
 
 d3.json("../data/DC_Ward.geojson").then(geoData => {
-    const topWards = [5, 1, 6]; // Top 3 wards as numbers
+    const topWards = [5, 1, 6]; // top 3 dangerous 
 
     L.geoJSON(geoData, {
         filter: d => {
@@ -43,7 +42,7 @@ d3.json("../data/DC_Ward.geojson").then(geoData => {
     }).addTo(map);
 });
 
-// Create custom legend
+// map legend 
 const legend = L.control({ position: "bottomright" });
 
 legend.onAdd = function(map) {
@@ -57,16 +56,13 @@ legend.onAdd = function(map) {
 
 legend.addTo(map);
 
-
-
-
-
-// Bar Chart
 let ctx = document.getElementById('district-chart').getContext('2d');
 
+// data crime records
 d3.csv("../data/crime_clean.csv").then(data => {
     const districtCounts = {};
 
+    // crimes/district
     data.forEach(d => {
         if (!districtCounts[d.district]) {
             districtCounts[d.district] = 0;
@@ -81,6 +77,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
     const labels = sortedDistricts.map(d => `District ${d[0]}`);
     const counts = sortedDistricts.map(d => d[1]);
 
+    // bar
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -111,13 +108,14 @@ d3.csv("../data/crime_clean.csv").then(data => {
         }
     });
 
-    // Cards at bottom
+    //  total crimes
     const totalCrimes = d3.sum(data, d => 1);
     document.getElementById("total-crimes").textContent = totalCrimes.toLocaleString();
 
     const wardCounts = {};
     const offenseCounts = {};
 
+    //  crimes by ward + offense group
     data.forEach(d => {
         if (!wardCounts[d.ward]) wardCounts[d.ward] = 0;
         wardCounts[d.ward]++;
@@ -125,30 +123,29 @@ d3.csv("../data/crime_clean.csv").then(data => {
         offenseCounts[d.offense_group]++;
     });
 
+    // ward most crimes
     const mostDangerousWard = Object.entries(wardCounts).sort((a, b) => b[1] - a[1])[0][0];
+
+    //  most common offense
     const topOffense = Object.entries(offenseCounts).sort((a, b) => b[1] - a[1])[0][0];
 
     document.getElementById("top-ward").textContent = `Ward ${mostDangerousWard}`;
     document.getElementById("top-offense").textContent = topOffense;
 
-    console.log("Ward Counts:", wardCounts);
-    console.log("Offense Counts:", offenseCounts);
-    console.log("Top Offense:", topOffense);
-
+    console.log("ward counts:", wardCounts);
+    console.log("offense counts:", offenseCounts);
+    console.log("top offense:", topOffense);
 });
 
-
-  window.addEventListener("scroll", () => {
+window.addEventListener("scroll", () => {
     const indicator = document.getElementById("scroll-indicator");
     const scrollY = window.scrollY;
     const windowHeight = window.innerHeight;
     const docHeight = document.documentElement.scrollHeight;
 
-    // Hide if user is near bottom (within 50px)
     if (scrollY + windowHeight >= docHeight - 50) {
       indicator.classList.add("hidden");
     } else {
       indicator.classList.remove("hidden");
     }
-  });
-
+});
