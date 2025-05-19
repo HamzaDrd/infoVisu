@@ -1,4 +1,4 @@
-// home.js - for dashboard homepage
+// home.js - for visu homepage
 
 let map = L.map('danger-map').setView([38.91, -77.02], 12);
 

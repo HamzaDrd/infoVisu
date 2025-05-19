@@ -339,7 +339,7 @@ footer {
 }
 
 /* === GRID LAYOUT STRUCTURE === */
-.dashboard {
+.visu {
   max-width: 1400px;
   margin: 0 auto;
   padding: 1rem;
@@ -348,7 +348,7 @@ footer {
   gap: 1.5rem;
 }
 
-.dashboard-content {
+.visu-content {
   display: grid;
   grid-template-columns: 240px 1fr 280px;
   gap: 2rem;
