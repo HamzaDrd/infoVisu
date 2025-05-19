@@ -1,5 +1,5 @@
+// community lens.js
 d3.csv("../data/crime_clean.csv").then(data => {
-  // Extract month safely
   data.forEach(d => {
     const rawDate = d.start_date?.slice(0, 7);
     d.month = rawDate && /^\d{4}-\d{2}$/.test(rawDate) ? rawDate : null;
@@ -7,7 +7,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
 
   const ancList = Array.from(new Set(data.map(d => d.anc).filter(Boolean))).sort();
 
-  // ---- FIRST FILTER: Bar + Grid ----
+  // Bar + Grid
   const ancSelect1 = d3.select("#anc-select-1");
   const ancSelect2 = d3.select("#anc-select-2");
 
@@ -16,7 +16,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
     ancSelect2.append("option").attr("value", anc).text(anc);
   });
 
-  // ---- SECOND FILTER: Line + Method ----
+  // Line + Method 
   const timeSelect1 = d3.select("#anc-select-time-1");
   const timeSelect2 = d3.select("#anc-select-time-2");
 
@@ -25,13 +25,12 @@ d3.csv("../data/crime_clean.csv").then(data => {
     timeSelect2.append("option").attr("value", anc).text(anc);
   });
 
-  // Set defaults
   ancSelect1.property("value", ancList[0]);
   ancSelect2.property("value", ancList[1] || ancList[0]);
   timeSelect1.property("value", ancList[0]);
   timeSelect2.property("value", ancList[1] || ancList[0]);
 
-  // --- Update Functions ---
+  //  update functions
   function updateBarAndGrid() {
     const ancA = ancSelect1.property("value");
     const ancB = ancSelect2.property("value");
@@ -64,19 +63,18 @@ d3.csv("../data/crime_clean.csv").then(data => {
     d3.select("#label-method-b").text(ancB);
   }
 
-  // --- Event listeners ---
   ancSelect1.on("change", updateBarAndGrid);
   ancSelect2.on("change", updateBarAndGrid);
   timeSelect1.on("change", updateLineAndMethod);
   timeSelect2.on("change", updateLineAndMethod);
 
-  // --- Initial Render ---
+  // init  
   updateBarAndGrid();
   updateLineAndMethod();
 });
 
 
-// Bar Chart
+// bar
 function updateChart(data, selectedANC, svgId) {
   const svg = d3.select(svgId);
   svg.selectAll("*").remove();
@@ -140,7 +138,7 @@ function updateChart(data, selectedANC, svgId) {
 }
 
 
-// Heatmap Grid
+// heatmap 
 function drawSeverityGrid(data, selectedANC, svgId) {
   const svg = d3.select(svgId);
   svg.selectAll("*").remove();
@@ -164,7 +162,7 @@ function drawSeverityGrid(data, selectedANC, svgId) {
   const width = +svg.attr("width") - margin.left - margin.right;
   const height = +svg.attr("height") - margin.top - margin.bottom;
 
-  // Axis labels
+  // labels
   svg.append("text")
     .attr("transform", `translate(20, ${margin.top + height / 2}) rotate(-90)`)
     .attr("class", "axis-label")
@@ -247,7 +245,7 @@ function getTextColor(bgColor) {
 d3.csv("../data/crime_clean.csv").then(data => {
   const parseDate = d3.timeParse("%Y-%m");
   data.forEach(d => {
-    d.month = d.start_date.slice(0, 7); // YYYY-MM
+    d.month = d.start_date.slice(0, 7); 
   });
 
   const ancA = "2D";
@@ -270,7 +268,7 @@ function drawLineChart(data, anc, elementId) {
 
   const filtered = data.filter(d => d.anc === anc);
   const parseMonth = d3.timeParse("%Y-%m");
-  const minDate = new Date(2022, 11); // December 2022
+  const minDate = new Date(2022, 11); 
 
   const timeCounts = Array.from(
     d3.rollup(filtered, v => v.length, d => d.month),
@@ -376,7 +374,7 @@ function drawMethodChart(data, anc, elementId) {
   });
 
 
-  // Only draw legend once
+  //  draw legend 
 if (elementId === "method-chart-a") {
   const legendContainer = d3.select("#method-legend");
   legendContainer.selectAll("*").remove();
