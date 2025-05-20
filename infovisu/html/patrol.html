@@ -113,47 +113,45 @@
     </div>  
   </section>
 
-  <section class="dynamic-chart-section">
-    <h2>Interactive PSA Analysis</h2>
   
-    <div class="drag-drop-grid">
+  <section class="interactive-chart-container">
+    <h2>Compare Crime Patterns by PSA</h2>
+    <p id="step-hint">Step 1: Select an X-axis variable.</p>
   
-      <!--  y axe  -->
-      <div class="y-variable-pool">
-        <h3>Y Variables</h3>
-        <div class="draggable" draggable="true" data-type="y">Offense Group</div>
-        <div class="draggable" draggable="true" data-type="y">Number of Crimes</div>
+    <div class="chart-with-filters">
+      <!-- Chart -->
+      <div class="chart-area">
+        <canvas id="psa-chart"></canvas>
+        <div id="psa-selected" class="psa-tag-list"></div>
       </div>
   
-      <!-- middle part -->
-      <div class="chart-center-area">
-        <canvas id="psa-chart" width="800" height="500"></canvas>
-        <p id="chart-hint" style="color: #888; font-size: 16px; text-align: center; margin-top: 10px;">
-            Drag an X variable, a Y variable, and a PSA to populate the chart.
-          </p>
-          
-  
-        <div class="x-variable-pool">
-          <h3>X Variables</h3>
-          <div class="draggable" draggable="true" data-type="x">Shift</div>
-          <div class="draggable" draggable="true" data-type="x">Method</div>
-          <div class="draggable" draggable="true" data-type="x">Month</div>
-          <div class="draggable" draggable="true" data-type="x">Day of Week</div>
-          <div class="draggable" draggable="true" data-type="x">Year</div>
+      <!-- Filters on the right -->
+      <div class="chart-filter-panel">
+        <div class="control-group">
+          <label for="x-axis-select">X Axis:</label>
+          <select id="x-axis-select">
+            <option value="shift">Shift</option>
+            <option value="method">Method</option>
+            <option value="month">Month</option>
+            <option value="day_of_week">Day of Week</option>
+          </select>
         </div>
-      </div>
   
-      <!-- psa part -->
-      <div class="psa-pool">
-        <h3>Select PSA</h3>
-        <input type="text" id="psa-search" placeholder="Search PSA..." />
-        <div id="psa-list">
+        <div class="control-group">
+          <label for="psa-search">Add PSA:</label>
+          <input type="text" id="psa-search" placeholder="Search PSA..." />
+          <div id="psa-dropdown" class="psa-scrollable"></div>
         </div>
+  
+        <button id="update-chart-btn" class="cta-button">Update Chart</button>
       </div>
     </div>
   </section>
+  
+  
  </main>
 </div>
+ 
 
 
 <!-- Trend view -->

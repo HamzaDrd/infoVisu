@@ -49,7 +49,7 @@ function updateMap() {
   const selectedDistrict = districtSelect.value;
   const selectedWard = wardSelect.value;
 
-// filter 
+  // filter 
   const filtered = allData.filter(d => {
     return (
       (selectedOffense === "all" || d.offense_group === selectedOffense) &&
@@ -136,7 +136,7 @@ d3.csv("../data/crime_clean.csv").then(data => {
 
   monthSlider.addEventListener("input", () => {
     const monthNames = ["All", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
-                        "Aug", "Sep", "Oct", "Nov", "Dec"];
+      "Aug", "Sep", "Oct", "Nov", "Dec"];
     monthLabel.textContent = monthNames[monthSlider.value];
     updateMap();
   });
@@ -175,184 +175,178 @@ d3.csv("../data/crime_clean.csv").then(data => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-
-    // PSA list
-    d3.csv("../data/psa_crime.csv").then(data => {
-      const psaList = Array.from(new Set(data.map(d => d.psa)))
-        .map(psa => parseInt(psa))
-        .sort((a, b) => a - b);
-    
-      const psaContainer = document.getElementById("psa-list");
-  
-      const psaElements = psaList.map(psa => {
-        const div = document.createElement("div");
-        div.className = "draggable";
-        div.draggable = true;
-        div.textContent = `PSA ${psa}`;
-        div.setAttribute("data-psa", psa);
-        div.setAttribute("data-type", "psa");
-      
-        div.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text", div.textContent.trim());
-          e.dataTransfer.setData("type", div.dataset.type || "psa");
-        });
-      
-        return div;
-      });
-      
-      
-      psaElements.slice(0, 5).forEach(el => psaContainer.appendChild(el));
-  
-      const searchInput = document.getElementById("psa-search");
-  
-      searchInput.addEventListener("input", function () {
-        const searchValue = this.value.trim().toLowerCase();
-        psaContainer.innerHTML = ""; 
-  
-        const filtered = psaElements.filter(el =>
-          el.textContent.toLowerCase().includes(searchValue)
-        );
-  
-        filtered.slice(0, 10).forEach(el => psaContainer.appendChild(el)); 
-      });
+  d3.csv("../data/psa_crime.csv").then(data => {
+    data.forEach(d => {
+      d.psa = parseInt(d.psa);
+      d.month = parseInt(d.month);
+      d.year = parseInt(d.year);
+      d.ward = parseInt(d.ward);
+      d.district = parseInt(d.district);
     });
-  
-    // Initialize Chart.js
+
+    
+    
+
+
+
+
+
     const ctx = document.getElementById("psa-chart").getContext("2d");
-  
     let psaChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: [],
-          datasets: []
+      type: 'bar',
+      data: { labels: [], datasets: [] },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: true },
+          title: { display: false }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: true },
-            title: { display: false }
+        scales: {
+          x: {
+            title: { display: true, text: 'X Axis', color: '#eee' },
+            ticks: { color: '#ccc' },
+            grid: { color: '#444' }
           },
-          scales: {
-            x: {
-              title: { display: true, text: 'X Axis', color: '#eee' },
-              ticks: { color: '#ccc' },
-              grid: { color: '#444' },
-              stacked: false,
-              barPercentage: 0.6,        
-              categoryPercentage: 0.6    
-            },
-            y: {
-              title: { display: true, text: 'Y Axis', color: '#eee' },
-              ticks: { color: '#ccc' },
-              grid: { color: '#444' },
-              stacked: false
-            }
+          y: {
+            title: { display: true, text: 'Number of Crimes', color: '#eee' },
+            ticks: { color: '#ccc' },
+            grid: { color: '#444' }
           }
         }
-      });
-      
-  
-    const dropArea = document.querySelector(".chart-center-area");
-    let selectedX = null;
-    let selectedY = null;
+      }
+    });
+
+    const xSelect = document.getElementById("x-axis-select");
+    const updateBtn = document.getElementById("update-chart-btn");
+    const psaSearch = document.getElementById("psa-search");
+    const psaDropdown = document.getElementById("psa-dropdown");
+    const psaTags = document.getElementById("psa-selected");
+    const stepHint = document.getElementById("step-hint");
+
     let selectedPSAs = [];
-  
-    //  drag
-    function refreshDraggables() {
-      document.querySelectorAll(".draggable").forEach(el => {
-        el.addEventListener("dragstart", (e) => {
-          e.dataTransfer.setData("text", el.textContent.trim());
-          e.dataTransfer.setData("type", el.dataset.type || "psa");
+
+    const allPSAs = Array.from(new Set(data.map(d => parseInt(d.psa)))).sort((a, b) => a - b);
+
+    function renderDropdown(filteredList) {
+      psaDropdown.innerHTML = "";
+      filteredList.slice(0, 5).forEach(psa => {
+        const item = document.createElement("div");
+        item.textContent = `PSA ${psa}`;
+        item.className = "psa-option";
+        item.addEventListener("click", () => {
+          if (!selectedPSAs.includes(psa)) {
+            selectedPSAs.push(psa);
+            renderTags();
+            stepHint.textContent = "Step 3: Click 'Update Chart' to visualize.";
+          }
         });
+        psaDropdown.appendChild(item);
       });
     }
-    refreshDraggables(); 
-  
-    // Drag + drop 
-    dropArea.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      dropArea.style.border = "2px dashed #ff4444";
-    });
-  
-    dropArea.addEventListener("dragleave", () => {
-      dropArea.style.border = "none";
-    });
-  
-    dropArea.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropArea.style.border = "none";
-  
-      const value = e.dataTransfer.getData("text");
-      const type = e.dataTransfer.getData("type");
-  
-      console.log("Dropped:", value, type);
-  
-      if (type === "x") {
-        selectedX = value;
-      } else if (type === "y") {
-        selectedY = value;
-      } else if (value.startsWith("PSA")) {
-        const psa = value.replace("PSA ", "");
-        if (!selectedPSAs.includes(psa) && selectedPSAs.length < 5) {
-          selectedPSAs.push(psa);
-        }
-      }
-  
-      console.log("Selected X:", selectedX);
-      console.log("Selected Y:", selectedY);
-      console.log("Selected PSAs:", selectedPSAs);
-  
-      updateInteractiveChart();
-    });
-  
-    function updateInteractiveChart() {
-        const hint = document.getElementById("chart-hint");
-      
-        if (selectedX && selectedY && selectedPSAs.length > 0) {
-          hint.style.display = "none";
-      
-          // set labels 
-          let xLabels = [];
-      
-          if (selectedX.toLowerCase() === "shift") {
-            xLabels = ["Day", "Evening", "Midnight"];
-          } else if (selectedX.toLowerCase() === "method") {
-            xLabels = ["Gun", "Knife", "Others"]; 
-          } else if (selectedX.toLowerCase() === "month") {
-            xLabels = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-          } else if (selectedX.toLowerCase() === "day of week") {
-            xLabels = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-          } else if (selectedX.toLowerCase() === "year") {
-            xLabels = ["2020", "2021", "2022", "2023", "2024"]; 
-          } else {
-            xLabels = selectedPSAs;
-          }
-      
-          psaChart.data.labels = xLabels;
-      
-          psaChart.options.scales.x.title.text = selectedX;
-          psaChart.options.scales.y.title.text = selectedY;
-      
-          //dummy data
-          psaChart.data.datasets = selectedPSAs.map((psa, i) => ({
-            label: `PSA ${psa}`,
-            data: xLabels.map(() => Math.floor(Math.random() * 100)), 
-            backgroundColor: ["#ff4444", "#ff8844", "#44c2ff", "#44ff88", "#ff44dd"][i % 5]
-          }));
-      
-          psaChart.update();
-      
-        } else {
-          hint.style.display = "block";
-        }
-      }
-      
-  });
 
-  function getColor(index) {
-    const colors = ["#ff4444", "#44c2ff", "#44ff88", "#ff8844", "#bb66ff"];
-    return colors[index % colors.length];
-  }
+    function renderTags() {
+      psaTags.innerHTML = "";
+      selectedPSAs.forEach((psa, i) => {
+        const tag = document.createElement("div");
+        tag.className = "psa-tag";
+        tag.textContent = `PSA ${psa}`;
+        const close = document.createElement("span");
+        close.textContent = "×";
+        close.onclick = () => {
+          selectedPSAs.splice(i, 1);
+          renderTags();
+        };
+        tag.appendChild(close);
+        psaTags.appendChild(tag);
+      });
+    }
+
+    psaSearch.addEventListener("input", () => {
+      const val = psaSearch.value.trim();
+      const filtered = allPSAs.filter(psa => psa.toString().includes(val));
+      renderDropdown(filtered);
+    });
+
+    renderDropdown(allPSAs);
+
+    xSelect.addEventListener("change", () => {
+      stepHint.textContent = "Step 2: Add one or more PSA numbers.";
+    });
+
+    updateBtn.addEventListener("click", () => {
+      const selectedX = xSelect.value;
+      const allGroups = new Set();
+
+      selectedPSAs.forEach(psa => {
+        const filtered = data.filter(d => +d.psa === psa);
+        filtered.forEach(d => {
+          let key;
+          if (selectedX === "shift") key = d.shift;
+          else if (selectedX === "method") key = d.method;
+          else if (selectedX === "month" && d.month !== null)
+            key = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.month];
+          else if (selectedX === "day_of_week") key = d.day_of_week;
+          else if (selectedX === "hour") key = d.hour;
+          else key = null;
+
+          if (key !== null && key !== undefined && key !== "") {
+            allGroups.add(key);
+          }
+        });
+      });
+
+      const xLabels = Array.from(allGroups).sort((a, b) => {
+        if (selectedX === "month") {
+          const order = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          return order.indexOf(a) - order.indexOf(b);
+        }
+        if (selectedX === "day_of_week") {
+          const order = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+          return order.indexOf(a) - order.indexOf(b);
+        }
+        return a - b;
+      });
+
+      psaChart.data.labels = xLabels;
+
+      psaChart.data.datasets = selectedPSAs.map((psa, index) => {
+        const filtered = data.filter(d => +d.psa === psa);
+        const counts = {};
+        xLabels.forEach(label => counts[label] = 0);
+
+        filtered.forEach(d => {
+          let key;
+          if (selectedX === "shift") key = d.shift;
+          else if (selectedX === "method") key = d.method;
+          else if (selectedX === "month" && d.month !== null)
+            key = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][d.month];
+          else if (selectedX === "day_of_week") key = d.day_of_week;
+          else if (selectedX === "hour") key = d.hour;
+          else key = null;
+
+          if (key in counts) {
+            counts[key]++;
+          }
+        });
+
+        return {
+          label: `PSA ${psa}`,
+          data: xLabels.map(label => counts[label] || 0),
+          backgroundColor: getColor(index)
+        };
+      });
+
+      psaChart.options.scales.x.title.text = xSelect.options[xSelect.selectedIndex].text;
+      psaChart.update();
+    });
+
+    function getColor(index) {
+      const colors = ["#ff4444", "#44c2ff", "#44ff88", "#ff8844", "#bb66ff"];
+      return colors[index % colors.length];
+    }
+  });
+});
+
 
 /* TREND VIEW --------------------------------------------------------------------------------------------------------------- */
 
@@ -422,11 +416,11 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
   // Function to highlight the heat calendar cells based on selected months
   function highlightHeatCalendar(months) {
     const svg = d3.select("#daily-crime-chart-svg");
-      
+
     // Define the color scale for restoring original colors
-     const colorScale = d3.scaleSequential(d3.interpolateReds)
+    const colorScale = d3.scaleSequential(d3.interpolateReds)
       .domain([0, d3.max(svg.selectAll(".cell").data(), d => d.count)]);
-      
+
     svg.selectAll(".cell")
       .attr("fill", d => {
         // If the current cell's month is in the highlighted months, apply the highlight color
@@ -438,11 +432,11 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
         return colorScale(d.count);
       });
   }
-  
+
   // Function to highlight the bar chart based on selected month
   function highlightBarChart(month) {
     const svg = d3.select("#timeline-chart-svg");
-      
+
     svg.selectAll(".bar")
       .attr("fill", d => (d.date.getMonth() === month ? "#ff8844" : "#ff0000"));
   }
@@ -452,45 +446,45 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
     // Get the month name
     const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     const monthName = monthNames[date.getMonth()];
-    
+
     // Set the modal title with the month name
     document.getElementById("modal-month-title").textContent = monthName;
 
     // Filter data for the selected month
-    const monthData = filteredData.filter(d => 
+    const monthData = filteredData.filter(d =>
       d.date.getFullYear() === date.getFullYear() &&
       d.date.getMonth() === date.getMonth()
     );
-  
+
     // Aggregate data for violent vs. property crimes
     const crimeTypeCounts = d3.rollups(
       monthData,
       v => d3.sum(v, d => d.count),
       d => d.offense_group
     );
-  
+
     const labels = crimeTypeCounts.map(([type]) => type);
     const data = crimeTypeCounts.map(([_, count]) => count);
-  
+
     // Aggregate data by shift
     const shiftCounts = d3.rollups(
       monthData,
       v => d3.sum(v, d => d.count),
       d => d.shift
     );
-  
+
     const shiftLabels = shiftCounts.map(([shift]) => shift);
     const shiftData = shiftCounts.map(([_, count]) => count);
-  
+
     // Aggregate weekly data for the sparkline
     const weeklyCounts = d3.rollups(
       monthData,
       v => d3.sum(v, d => d.count),
       d => Math.floor(d.date.getDate() / 7) // Group by week (0 = first week, 1 = second week, etc.)
     );
-  
+
     const weeklyData = weeklyCounts.map(([week, count]) => count);
-  
+
     // Aggregate data by ward and sort to get the top 5 wards
     const wardCounts = d3.rollups(
       monthData,
@@ -498,39 +492,39 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       d => d.ward
     ).sort((a, b) => b[1] - a[1]) // Sort by count descending
       .slice(0, 5); // Take the top 5
-  
+
     const wardLabels = wardCounts.map(([ward]) => `Ward ${ward}`);
     const wardData = wardCounts.map(([_, count]) => count);
-  
+
     // Open the modal
     const modal = document.getElementById("crime-type-modal");
     modal.style.display = "block";
-  
+
     // Clear previous charts
     d3.select("#crime-type-piechart-svg").selectAll("*").remove();
     d3.select("#shift-barchart-svg").selectAll("*").remove();
     d3.select("#weekly-trend-svg").selectAll("*").remove();
     d3.select("#top-wards-svg").selectAll("*").remove();
-  
+
     // Draw the pie chart
     const pieSvg = d3.select("#crime-type-piechart-svg");
     const pieWidth = +pieSvg.attr("width");
     const pieHeight = +pieSvg.attr("height");
     const pieRadius = Math.min(pieWidth, pieHeight) / 2;
-  
+
     const pieGroup = pieSvg.append("g")
       .attr("transform", `translate(${pieWidth / 2}, ${pieHeight / 2})`);
-  
+
     const pie = d3.pie().value(d => d)(data);
-  
+
     const arc = d3.arc()
       .innerRadius(0)
       .outerRadius(pieRadius);
-  
+
     const color = d3.scaleOrdinal()
       .domain(labels)
       .range(["#ff4444", "#44c2ff"]); // Colors for violent and property crimes
-  
+
     pieGroup.selectAll("path")
       .data(pie)
       .enter()
@@ -539,7 +533,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("fill", (d, i) => color(labels[i]))
       .attr("stroke", "#fff")
       .attr("stroke-width", "2px");
-  
+
     pieGroup.selectAll("text")
       .data(pie)
       .enter()
@@ -549,30 +543,30 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("font-size", "12px")
       .attr("fill", "#fff")
       .text((d, i) => `${labels[i]} (${data[i]})`);
-  
+
     // Draw the shift distribution bar chart
     const shiftSvg = d3.select("#shift-barchart-svg");
     const shiftWidth = +shiftSvg.attr("width") - 50; // Add margin
     const shiftHeight = +shiftSvg.attr("height") - 50; // Add margin
     const shiftMargin = { top: 20, right: 20, bottom: 40, left: 50 };
-  
+
     const xScaleShift = d3.scaleBand()
       .domain(shiftLabels)
       .range([shiftMargin.left, shiftWidth])
       .padding(0.2);
-  
+
     const yScaleShift = d3.scaleLinear()
       .domain([0, d3.max(shiftData)])
       .range([shiftHeight, shiftMargin.top]);
-  
+
     shiftSvg.append("g")
       .attr("transform", `translate(0, ${shiftHeight})`)
       .call(d3.axisBottom(xScaleShift));
-  
+
     shiftSvg.append("g")
       .attr("transform", `translate(${shiftMargin.left}, 0)`)
       .call(d3.axisLeft(yScaleShift));
-  
+
     shiftSvg.selectAll(".bar")
       .data(shiftData)
       .enter()
@@ -583,21 +577,21 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("width", xScaleShift.bandwidth())
       .attr("height", d => shiftHeight - yScaleShift(d))
       .attr("fill", "#44c2ff");
-  
+
     // Draw the weekly trend sparkline
     const sparklineSvg = d3.select("#weekly-trend-svg");
     const sparklineWidth = +sparklineSvg.attr("width") - 50; // Add margin
     const sparklineHeight = +sparklineSvg.attr("height") - 50; // Add margin
     const sparklineMargin = { top: 20, right: 20, bottom: 40, left: 50 };
-  
+
     const xScaleSparkline = d3.scaleLinear()
       .domain([0, weeklyData.length - 1])
       .range([sparklineMargin.left, sparklineWidth - sparklineMargin.right]);
-  
+
     const yScaleSparkline = d3.scaleLinear()
       .domain([0, d3.max(weeklyData)])
       .range([sparklineHeight - sparklineMargin.bottom, sparklineMargin.top]);
-  
+
     sparklineSvg.append("g")
       .attr("transform", `translate(0, ${sparklineHeight - sparklineMargin.bottom})`)
       .call(d3.axisBottom(xScaleSparkline).ticks(weeklyData.length).tickFormat((d, i) => `Week ${i + 1}`))
@@ -605,25 +599,25 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("transform", "rotate(-45)")
       .style("text-anchor", "end")
       .style("fill", "#eee");
-  
+
     sparklineSvg.append("g")
       .attr("transform", `translate(${sparklineMargin.left}, 0)`)
       .call(d3.axisLeft(yScaleSparkline))
       .selectAll("text")
       .style("fill", "#eee");
-  
+
     const line = d3.line()
       .x((d, i) => xScaleSparkline(i))
       .y(d => yScaleSparkline(d))
       .curve(d3.curveMonotoneX);
-  
+
     sparklineSvg.append("path")
       .datum(weeklyData)
       .attr("fill", "none")
       .attr("stroke", "#ff8844")
       .attr("stroke-width", 2)
       .attr("d", line);
-  
+
     sparklineSvg.selectAll("circle")
       .data(weeklyData)
       .enter()
@@ -632,30 +626,30 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("cy", d => yScaleSparkline(d))
       .attr("r", 3)
       .attr("fill", "#ff8844");
-  
+
     // Draw the horizontal bar chart for top wards
     const wardSvg = d3.select("#top-wards-svg");
     const wardWidth = +wardSvg.attr("width") - 50; // Add margin
     const wardHeight = +wardSvg.attr("height") - 50; // Add margin
     const wardMargin = { top: 20, right: 20, bottom: 40, left: 100 };
-  
+
     const xScaleWard = d3.scaleLinear()
       .domain([0, d3.max(wardData)])
       .range([wardMargin.left, wardWidth]);
-  
+
     const yScaleWard = d3.scaleBand()
       .domain(wardLabels)
       .range([wardMargin.top, wardHeight])
       .padding(0.2);
-  
+
     wardSvg.append("g")
       .attr("transform", `translate(0, ${wardHeight})`)
       .call(d3.axisBottom(xScaleWard).ticks(5));
-  
+
     wardSvg.append("g")
       .attr("transform", `translate(${wardMargin.left}, 0)`)
       .call(d3.axisLeft(yScaleWard));
-  
+
     wardSvg.selectAll(".bar")
       .data(wardData)
       .enter()
@@ -666,7 +660,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("width", d => xScaleWard(d) - xScaleWard(0))
       .attr("height", yScaleWard.bandwidth())
       .attr("fill", "#ff8844");
-  
+
     // Close modal on click
     document.getElementById("close-crime-type-modal").onclick = () => {
       modal.style.display = "none";
@@ -729,8 +723,8 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
           .style("opacity", 1) // make tooltip visible
           .style("left", `${event.pageX + 10}px`)
           .style("top", `${event.pageY - 20}px`);
-          // Highlight corresponding days in heat-calendar
-          highlightHeatCalendar([d.date.getMonth()]);
+        // Highlight corresponding days in heat-calendar
+        highlightHeatCalendar([d.date.getMonth()]);
       })
       .on("mouseout", () => {
         d3.select("#timeline-tooltip").style("visibility", "hidden").style("opacity", 0);
@@ -749,73 +743,73 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
     const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
     const dayName = dayNames[date.getDay()];
     const formattedDate = d3.timeFormat("%B %d, %Y")(date);
-  
+
     // Set the modal title with the day name and date
     document.getElementById("modal-day-title").textContent = `${dayName}, ${formattedDate}`;
-  
+
     // Filter data for the selected day
-    const dayData = filteredData.filter(d => 
+    const dayData = filteredData.filter(d =>
       d.date.getFullYear() === date.getFullYear() &&
       d.date.getMonth() === date.getMonth() &&
       d.date.getDate() === date.getDate()
     );
-  
+
     // Aggregate data by offense group for the pie chart
     const offenseCounts = d3.rollups(
       dayData,
       v => d3.sum(v, d => d.count),
       d => d.offense_group
     );
-  
+
     const pieLabels = offenseCounts.map(([offense]) => offense);
     const pieData = offenseCounts.map(([_, count]) => count);
-  
+
     // Aggregate data by shift for the bar chart
     const shiftCounts = d3.rollups(
       dayData,
       v => d3.sum(v, d => d.count),
       d => d.shift
     );
-  
+
     const barLabels = shiftCounts.map(([shift]) => shift);
     const barData = shiftCounts.map(([_, count]) => count);
-  
+
     // Aggregate data by offensekey for the offensekey distribution bar chart
     const offenseKeyCounts = d3.rollups(
       dayData,
       v => d3.sum(v, d => d.count),
       d => d.offensekey
     );
-  
+
     const offenseKeyLabels = offenseKeyCounts.map(([offensekey]) => offensekey);
     const offenseKeyData = offenseKeyCounts.map(([_, count]) => count);
-  
+
     // Open the modal
     const modal = document.getElementById("piechart-modal");
     modal.style.display = "block";
-  
+
     // Clear previous charts
     d3.select("#piechart-svg").selectAll("*").remove();
     d3.select("#barchart-svg").selectAll("*").remove();
     d3.select("#method-barchart-svg").selectAll("*").remove();
-  
+
     // Draw the pie chart
     const pieSvg = d3.select("#piechart-svg");
     const pieWidth = +pieSvg.attr("width");
     const pieHeight = +pieSvg.attr("height");
     const pieRadius = Math.min(pieWidth, pieHeight) / 2;
-  
+
     const pieGroup = pieSvg.append("g")
       .attr("transform", `translate(${pieWidth / 2}, ${pieHeight / 2})`);
-  
+
     const pieColor = d3.scaleOrdinal(d3.schemeCategory10);
-  
+
     const pie = d3.pie().value(d => d)(pieData);
-  
+
     const pieArc = d3.arc()
       .innerRadius(0)
       .outerRadius(pieRadius);
-  
+
     pieGroup.selectAll("path")
       .data(pie)
       .enter()
@@ -824,7 +818,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("fill", (d, i) => pieColor(i))
       .attr("stroke", "#fff")
       .attr("stroke-width", "2px");
-  
+
     pieGroup.selectAll("text")
       .data(pie)
       .enter()
@@ -834,31 +828,31 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("font-size", "12px")
       .attr("fill", "#fff")
       .text((d, i) => `${pieLabels[i]} (${pieData[i]})`);
-  
+
     // Draw the shift distribution bar chart
     const barSvg = d3.select("#barchart-svg");
     const barWidth = +barSvg.attr("width") - 50; // Add margin
     const barHeight = +barSvg.attr("height") - 50; // Add margin
     const barMargin = { top: 20, right: 20, bottom: 40, left: 50 };
-  
+
     const xScale = d3.scaleBand()
       .domain(barLabels)
       .range([barMargin.left, barWidth])
       .padding(0.2);
-  
+
     const yScale = d3.scaleLinear()
       .domain([0, d3.max(barData)])
       .range([barHeight, barMargin.top]);
-  
+
     // Add axes
     barSvg.append("g")
       .attr("transform", `translate(0, ${barHeight})`)
       .call(d3.axisBottom(xScale));
-  
+
     barSvg.append("g")
       .attr("transform", `translate(${barMargin.left}, 0)`)
       .call(d3.axisLeft(yScale));
-  
+
     // Add bars
     barSvg.selectAll(".bar")
       .data(barData)
@@ -870,22 +864,22 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("width", xScale.bandwidth())
       .attr("height", d => barHeight - yScale(d))
       .attr("fill", "#44c2ff");
-  
+
     // Draw the offensekey distribution bar chart
     const offenseKeySvg = d3.select("#method-barchart-svg");
     const offenseKeyWidth = +offenseKeySvg.attr("width") - 50; // Add margin
     const offenseKeyHeight = +offenseKeySvg.attr("height") - 50; // Add margin
     const offenseKeyMargin = { top: 20, right: 20, bottom: 60, left: 50 };
-  
+
     const xScaleOffenseKey = d3.scaleBand()
       .domain(offenseKeyLabels)
       .range([offenseKeyMargin.left, offenseKeyWidth])
       .padding(0.2);
-  
+
     const yScaleOffenseKey = d3.scaleLinear()
       .domain([0, d3.max(offenseKeyData)])
       .range([offenseKeyHeight, offenseKeyMargin.top]);
-  
+
     // Add axes
     offenseKeySvg.append("g")
       .attr("transform", `translate(0, ${offenseKeyHeight})`)
@@ -895,11 +889,11 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .style("text-anchor", "end") // Align text to the end
       .style("fill", "#eee"); // Ensure labels are visible
 
-  
+
     offenseKeySvg.append("g")
       .attr("transform", `translate(${offenseKeyMargin.left}, 0)`)
       .call(d3.axisLeft(yScaleOffenseKey));
-  
+
     // Add bars
     offenseKeySvg.selectAll(".bar")
       .data(offenseKeyData)
@@ -911,7 +905,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
       .attr("width", xScaleOffenseKey.bandwidth())
       .attr("height", d => offenseKeyHeight - yScaleOffenseKey(d))
       .attr("fill", "#ff8844");
-  
+
     // Close modal on click
     document.getElementById("close-modal").onclick = () => {
       modal.style.display = "none";
@@ -971,7 +965,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
           .style("left", `${event.pageX + 10}px`)
           .style("top", `${event.pageY - 20}px`);
         // Highlight corresponding month in the bar chart
-        highlightBarChart(d.date.getMonth());  
+        highlightBarChart(d.date.getMonth());
       })
       .on("mouseout", () => {
         d3.select("#timeline-tooltip").style("visibility", "hidden").style("opacity", 0);
@@ -1222,7 +1216,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
     const filteredData = getFilteredData();
     drawBarChart(filteredData);
   }
-  
+
   // Add event listeners for heat calendar filters
   d3.selectAll(".timeline-filter-panel select").on("change", () => {
     drawBarChartWithFilters();
@@ -1233,7 +1227,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
   drawBarChartWithFilters(); // Draw bar chart
   drawHeatCalendarWithFilters(); // Draw heat calendar
   drawDayOfWeekChart(data); // New day-of-week bar chart
-  
+
 });
 
 
