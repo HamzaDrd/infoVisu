@@ -1,3 +1,4 @@
+/* PATROL VIEW --------------------------------------------------------------------------------------------------------------- */
 const offenseSelect = document.getElementById("offense-select");
 const shiftSelect = document.getElementById("shift-select");
 const monthSlider = document.getElementById("month-slider");
@@ -353,7 +354,7 @@ window.addEventListener("DOMContentLoaded", () => {
     return colors[index % colors.length];
   }
 
-  /* --------------------------------------------------------------------------------------------------------------------------------- */
+/* TREND VIEW --------------------------------------------------------------------------------------------------------------- */
 
 // Load the data for the charts
 d3.csv("../data/crime_daily_counts.csv").then(data => {
@@ -678,7 +679,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
 
     // Select or create the SVG element
     const svg = d3.select("#timeline-chart-svg")
-      .attr("width", "100%")
+      .attr("width", 400)
       .attr("height", 300);
 
     const margin = { top: 40, right: 40, bottom: 60, left: 70 };
@@ -924,7 +925,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
 
     // Select or create the SVG element
     const svg = d3.select("#daily-crime-chart-svg")
-      .attr("width", "100%")
+      .attr("width", 400)
       .attr("height", 300);
 
     const margin = { top: 40, right: 40, bottom: 60, left: 70 };
@@ -1146,7 +1147,7 @@ d3.csv("../data/crime_daily_counts.csv").then(data => {
     const svg = d3.select("#day-of-week-chart-svg");
     const width = +svg.attr("width");
     const height = +svg.attr("height");
-    const margin = { top: 40, right: 20, bottom: 60, left: 50 };
+    const margin = { top: 40, right: 20, bottom: 80, left: 60 }; // Increased bottom margin for x-axis labels
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
 

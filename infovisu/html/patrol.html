@@ -157,19 +157,20 @@
 
 
 <!-- Trend view -->
-<div id="trend-view">
+<div id="trend-view" style="display: none;">
 
   <!-- Crime Evolution View -->
   <header>
     <h1>CrimeWatch DC</h1>
     <p class="subtitle-big">Crime Evolution in Washington DC – 2023</p>
-    <p class="subtitle-small">Explore how crime fluctuated over time by type, location and police shift</p>
+    <p class="subtitle-small">Explore how crime fluctuated over time and discover trends</p>
 </header>
 
 <main>
   <!-- section for the crime-count interactive visu -->
   <section class="crime-evolution-visu">
     <h2>Crime Evolution</h2>
+    <p class="subtitle-small">Compare crime at multiple temporal scales and discover or analyse patterns.</p>
     <div class="visu-timeline-grid">
       <div class="timeline-and-filters">
 
@@ -191,22 +192,31 @@
         </div>
 
         <div class="chart-and-heatmap-container">
-          <div class="chart-container">
-            <svg id="timeline-chart-svg"></svg>
+          <div>
+            <h3>Monthly Crime Evolution</h3>
+            <p class="subtitle-small">Get the big-picture of how crime evolved through the seasons of 2023.</p>
+            <div class="chart-container">
+              <svg id="timeline-chart-svg" width="400" height="300"></svg>
+            </div>
           </div>
-          <div class="heatmap-container">
-            <svg id="daily-crime-chart-svg"></svg>
+          <div>
+            <h3>Day of Week Analysis</h3>
+            <p class="subtitle-small">Explore the weekly patterns of crime. Each bar represents a day of the week, with the height indicating the number of incidents.</p>
+            <div class="chart-container">
+              <svg id="day-of-week-chart-svg" width="400" height="300"></svg>
+            </div>
           </div>
-          <div id="timeline-tooltip" class="tooltip"></div>
+          <div>
+            <h3>Daily Crime Evolution</h3>
+            <p class="subtitle-small">Each square is one date, shaded by total incidents—so you can instantly spot “red-hot” days.</p>
+            <div class="chart-container">
+              <svg id="daily-crime-chart-svg" width="400" height="300"></svg>
+            </div>
+          </div>
         </div>
 
       </div>
-
-      <div class="day-of-week-chart-section">
-        <h2>Average Crimes by Day of the Week</h2>
-        <svg id="day-of-week-chart-svg" width="600" height="400"></svg>
-      </div>
-
+      <div id="timeline-tooltip" class="tooltip"></div>
     </div>
   </section>
 
@@ -219,7 +229,7 @@
 </footer>
 
 <script src="../js/patrol.js"></script>
-<!--
+
 <script>
   const toggleButton = document.getElementById("toggle-view");
   const patrolView = document.getElementById("patrol-view");
@@ -235,16 +245,17 @@
       trendView.style.display = "block";
       toggleButton.textContent = "Switch to Patrol View";
 
+      /*
       // Trigger rendering of visualizations after making the trend-view visible
       setTimeout(() => {
         drawBarChartWithFilters();
         drawHeatCalendarWithFilters();
         drawDayOfWeekChart(data);
       }, 0);
+      */
     }
   });
 </script>
--->
 
 <!-- Detailed view for monthly barchart-->
 <div id="crime-type-modal" class="modal" style="display: none;">

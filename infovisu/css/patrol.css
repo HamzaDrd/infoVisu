@@ -405,15 +405,26 @@ body {
   
   .chart-and-heatmap-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: space-between;
+    align-items: stretch;
     gap: 20px;
     margin-top: 20px;
-    flex-grow: 1;
+  }
+
+  .chart-and-heatmap-container > div {
+    flex: 1; /* Ensure all children take equal space */
+    background: #1a1a1a; /* Optional: Add consistent background */
+    padding: 20px; /* Optional: Add padding */
+    border-radius: 12px; /* Optional: Add rounded corners */
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.05); /* Optional: Add shadow */
+    display: flex;
+    flex-direction: column; /* Ensure content inside is stacked vertically */
+    align-items: center; /* Center-align content horizontally */
+    justify-content: center; /* Center-align content vertically */
   }
 
   .chart-container, .heatmap-container {
-    flex: 1;
+    flex: 1; /* Ensure all containers take equal space */
     background: #1a1a1a;
     padding: 20px;
     border-radius: 12px;
@@ -422,8 +433,8 @@ body {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    max-width: 400px; /* Set a maximum width */
-    max-height: 300px; /* Set a maximum height */
+    width: 400px; /* Set a fixed width */
+    height: 300px; /* Set a fixed height */
   }
 
   /* Modal styles */
@@ -591,3 +602,35 @@ body {
   stroke: #444;
 }
 
+.day-of-week-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  padding: 10px;
+  background-color: #222; /* Optional for visual consistency */
+  border-radius: 8px; /* Optional for rounded corners */
+}
+
+.day-of-week-chart-section {
+  margin: 20px auto;
+  text-align: center;
+  color: #eee;
+  max-width: 700px; /* Ensure the container is wide enough */
+}
+
+#day-of-week-chart-svg {
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px; /* Match the SVG width */
+  height: auto;
+}
+
+.title-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+}
