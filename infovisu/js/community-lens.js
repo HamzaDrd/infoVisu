@@ -16,19 +16,8 @@ d3.csv("../data/crime_clean.csv").then(data => {
     ancSelect2.append("option").attr("value", anc).text(anc);
   });
 
-  // Line + Method 
-  const timeSelect1 = d3.select("#anc-select-time-1");
-  const timeSelect2 = d3.select("#anc-select-time-2");
-
-  ancList.forEach(anc => {
-    timeSelect1.append("option").attr("value", anc).text(anc);
-    timeSelect2.append("option").attr("value", anc).text(anc);
-  });
-
   ancSelect1.property("value", ancList[0]);
   ancSelect2.property("value", ancList[1] || ancList[0]);
-  timeSelect1.property("value", ancList[0]);
-  timeSelect2.property("value", ancList[1] || ancList[0]);
 
   //  update functions
   function updateBarAndGrid() {
@@ -63,14 +52,37 @@ d3.csv("../data/crime_clean.csv").then(data => {
     d3.select("#label-method-b").text(ancB);
   }
 
-  ancSelect1.on("change", updateBarAndGrid);
-  ancSelect2.on("change", updateBarAndGrid);
-  timeSelect1.on("change", updateLineAndMethod);
-  timeSelect2.on("change", updateLineAndMethod);
+  function updateAllCharts() {
+    const ancA = ancSelect1.property("value");
+    const ancB = ancSelect2.property("value");
+
+    updateChart(data, ancA, "#bar-chart-a");
+    updateChart(data, ancB, "#bar-chart-b");
+
+    drawSeverityGrid(data, ancA, "#severity-grid-a");
+    drawSeverityGrid(data, ancB, "#severity-grid-b");
+
+    drawLineChart(data, ancA, "line-chart-a");
+    drawLineChart(data, ancB, "line-chart-b");
+
+    drawMethodChart(data, ancA, "method-chart-a");
+    drawMethodChart(data, ancB, "method-chart-b");
+
+    d3.select("#label-bar-a").text(ancA);
+    d3.select("#label-bar-b").text(ancB);
+    d3.select("#label-grid-a").text(ancA);
+    d3.select("#label-grid-b").text(ancB);
+    d3.select("#label-line-a").text(ancA);
+    d3.select("#label-line-b").text(ancB);
+    d3.select("#label-method-a").text(ancA);
+    d3.select("#label-method-b").text(ancB);
+  }
+
+  ancSelect1.on("change", updateAllCharts);
+  ancSelect2.on("change", updateAllCharts);
 
   // init  
-  updateBarAndGrid();
-  updateLineAndMethod();
+  updateAllCharts();
 });
 
 
@@ -125,16 +137,41 @@ function updateChart(data, selectedANC, svgId) {
     .selectAll("text")
     .style("fill", "#ccc");
 
+  // Tooltip div
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "bar-tooltip")
+    .style("position", "absolute")
+    .style("background", "#222")
+    .style("color", "#fff")
+    .style("padding", "6px 10px")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("font-size", "13px")
+    .style("opacity", 0);
+
   g.selectAll(".bar")
     .data(top)
     .enter()
     .append("rect")
+    .attr("class", "bar")
     .attr("x", d => x(d[0]))
     .attr("y", d => y(d[1]))
     .attr("width", x.bandwidth())
     .attr("height", d => height - y(d[1]))
     .attr("fill", "#ff4444")
-    .attr("rx", 4);
+    .attr("rx", 4)
+    .on("mouseover", function (event, d) {
+      d3.select(this).attr("fill", "#ffa500");
+      tooltip.transition().duration(150).style("opacity", 0.9);
+      tooltip.html(`<strong>${d[0]}</strong><br/>${d[1]} incidents`)
+        .style("left", (event.pageX + 12) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      d3.select(this).attr("fill", "#ff4444");
+      tooltip.transition().duration(150).style("opacity", 0);
+    });
 }
 
 
@@ -162,7 +199,6 @@ function drawSeverityGrid(data, selectedANC, svgId) {
   const width = +svg.attr("width") - margin.left - margin.right;
   const height = +svg.attr("height") - margin.top - margin.bottom;
 
-  // labels
   svg.append("text")
     .attr("transform", `translate(20, ${margin.top + height / 2}) rotate(-90)`)
     .attr("class", "axis-label")
@@ -201,19 +237,48 @@ function drawSeverityGrid(data, selectedANC, svgId) {
     .selectAll("text")
     .style("fill", "#ccc");
 
+  // Tooltip
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "heatmap-tooltip")
+    .style("position", "absolute")
+    .style("background", "#222")
+    .style("color", "#fff")
+    .style("padding", "6px 10px")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("font-size", "13px")
+    .style("opacity", 0);
+
   topTracts.forEach(row => {
     const tract = row[0];
     const counts = row[1];
+
     ucrRanks.forEach(rank => {
       const value = counts.get(rank) || 0;
       const fill = colorScale(value);
 
-      g.append("rect")
+      const rect = g.append("rect")
         .attr("x", x(rank))
         .attr("y", y(tract))
         .attr("width", x.bandwidth())
         .attr("height", y.bandwidth())
-        .attr("fill", fill);
+        .attr("fill", fill)
+        .on("mouseover", function (event) {
+          d3.select(this).attr("stroke", "#333").attr("stroke-width", 2);
+          tooltip.transition().duration(150).style("opacity", 0.9);
+          tooltip.html(
+            `<strong>Tract:</strong> ${tract}<br/>
+             <strong>UCR Rank:</strong> ${rank}<br/>
+             <strong>Crimes:</strong> ${value}`
+          )
+            .style("left", (event.pageX + 12) + "px")
+            .style("top", (event.pageY - 28) + "px");
+        })
+        .on("mouseout", function () {
+          d3.select(this).attr("stroke", null);
+          tooltip.transition().duration(150).style("opacity", 0);
+        });
 
       if (value > 0) {
         g.append("text")
@@ -268,7 +333,7 @@ function drawLineChart(data, anc, elementId) {
 
   const filtered = data.filter(d => d.anc === anc);
   const parseMonth = d3.timeParse("%Y-%m");
-  const minDate = new Date(2022, 11); 
+  const minDate = new Date(2022, 11);
 
   const timeCounts = Array.from(
     d3.rollup(filtered, v => v.length, d => d.month),
@@ -277,8 +342,6 @@ function drawLineChart(data, anc, elementId) {
       return parsed && parsed >= minDate ? { month: parsed, count } : null;
     }
   ).filter(d => d !== null).sort((a, b) => a.month - b.month);
-
-
 
   const maxDate = d3.max(timeCounts, d => d.month);
 
@@ -313,6 +376,41 @@ function drawLineChart(data, anc, elementId) {
     .attr("stroke", "#ff4444")
     .attr("stroke-width", 2.5)
     .attr("d", line);
+
+  // Tooltip
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "line-tooltip")
+    .style("position", "absolute")
+    .style("background", "#222")
+    .style("color", "#fff")
+    .style("padding", "6px 10px")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("font-size", "13px")
+    .style("opacity", 0);
+
+  // Dots
+  g.selectAll(".dot")
+    .data(timeCounts)
+    .enter()
+    .append("circle")
+    .attr("class", "dot")
+    .attr("cx", d => x(d.month))
+    .attr("cy", d => y(d.count))
+    .attr("r", 4)
+    .attr("fill", "#ff4444")
+    .on("mouseover", function (event, d) {
+      d3.select(this).attr("fill", "#ffa500").attr("r", 6);
+      tooltip.transition().duration(150).style("opacity", 0.9);
+      tooltip.html(`<strong>${d3.timeFormat("%B %Y")(d.month)}</strong><br/>${d.count} incidents`)
+        .style("left", (event.pageX + 12) + "px")
+        .style("top", (event.pageY - 28) + "px");
+    })
+    .on("mouseout", function () {
+      d3.select(this).attr("fill", "#ff4444").attr("r", 4);
+      tooltip.transition().duration(150).style("opacity", 0);
+    });
 }
 
 function drawMethodChart(data, anc, elementId) {
@@ -333,7 +431,6 @@ function drawMethodChart(data, anc, elementId) {
     d => d.offensekey.split("|")[1],
     d => d.method
   ).map(([offense, methodArray]) => [offense, new Map(methodArray)]);
-
 
   const offenses = offenseMethodCounts.map(d => d[0]);
   const methods = Array.from(new Set(filtered.map(d => d.method))).filter(Boolean);
@@ -358,6 +455,19 @@ function drawMethodChart(data, anc, elementId) {
     .selectAll("text")
     .style("fill", "#ccc");
 
+  // Tooltip
+  const tooltip = d3.select("body")
+    .append("div")
+    .attr("class", "method-tooltip")
+    .style("position", "absolute")
+    .style("background", "#222")
+    .style("color", "#fff")
+    .style("padding", "6px 10px")
+    .style("border-radius", "6px")
+    .style("pointer-events", "none")
+    .style("font-size", "13px")
+    .style("opacity", 0);
+
   let offset = {};
   offenses.forEach(o => offset[o] = 0);
 
@@ -366,27 +476,49 @@ function drawMethodChart(data, anc, elementId) {
       .data(offenseMethodCounts)
       .enter()
       .append("rect")
+      .attr("class", `bar-${method}`)
       .attr("x", d => x(d[0]))
-      .attr("y", d => y((offset[d[0]] += d[1].get(method) || 0)))
-      .attr("height", d => height - y(d[1].get(method) || 0))
+      .attr("y", d => {
+        const val = d[1].get(method) || 0;
+        const yPos = y(offset[d[0]] + val);
+        offset[d[0]] += val;
+        return yPos;
+      })
+      .attr("height", d => {
+        const val = d[1].get(method) || 0;
+        return height - y(val);
+      })
       .attr("width", x.bandwidth())
-      .attr("fill", color(method));
+      .attr("fill", color(method))
+      .on("mouseover", function (event, d) {
+        const val = d[1].get(method) || 0;
+        if (val === 0) return;
+
+        d3.select(this).attr("fill", d3.color(color(method)).darker(1));
+
+        tooltip.transition().duration(150).style("opacity", 0.9);
+        tooltip.html(`<strong>${d[0]}</strong><br/>Method: ${method}<br/>${val} incidents`)
+          .style("left", (event.pageX + 12) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("fill", color(method));
+        tooltip.transition().duration(150).style("opacity", 0);
+      });
   });
 
+  // draw legend
+  if (elementId === "method-chart-a") {
+    const legendContainer = d3.select("#method-legend");
+    legendContainer.selectAll("*").remove();
 
-  //  draw legend 
-if (elementId === "method-chart-a") {
-  const legendContainer = d3.select("#method-legend");
-  legendContainer.selectAll("*").remove();
-
-  methods.forEach(method => {
-    const item = legendContainer.append("div").attr("class", "method-legend-item");
-    item.append("div")
-      .attr("class", "method-legend-color")
-      .style("background-color", color(method));
-    item.append("span").text(method || "Unknown");
-  });
-}
-
+    methods.forEach(method => {
+      const item = legendContainer.append("div").attr("class", "method-legend-item");
+      item.append("div")
+        .attr("class", "method-legend-color")
+        .style("background-color", color(method));
+      item.append("span").text(method || "Unknown");
+    });
+  }
 }
 

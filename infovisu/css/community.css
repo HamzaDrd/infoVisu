@@ -209,3 +209,56 @@ svg {
   border-radius: 4px;
   display: inline-block;
 }
+
+.bar-tooltip {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  transition: opacity 0.2s;
+  position: absolute;
+  z-index: 10;
+}
+
+.line-tooltip {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  transition: opacity 0.2s;
+  position: absolute;
+  z-index: 10;
+}
+
+.method-tooltip {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  transition: opacity 0.2s;
+  position: absolute;
+  z-index: 10;
+}
+
+.heatmap-tooltip {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  transition: opacity 0.2s;
+  position: absolute;
+  z-index: 10;
+}
+
+.chart-section {
+  margin-bottom: 60px;
+}
+
+.chart-section h2 {
+  font-size: 24px;
+  color: var(--primary);
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.chart-section p {
+  color: #bbb;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 20px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.term-explainer abbr {
+  text-decoration: underline dotted;
+  cursor: help;
+}
