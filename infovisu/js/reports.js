@@ -1,3 +1,4 @@
+
 // === CLUSTER NAME MAPPING ===
 // Maps internal cluster identifiers to neighborhood names
 const clusterNames = {
@@ -49,217 +50,669 @@ const clusterNames = {
   "cluster 46": "Arboretum, Anacostia River",
 };
 
+let activeClusterId = null;
+let activeChartType = null;   
+
 // === LOAD AND PROCESS CSV DATA ===
-d3.csv("../data/crime_clean.csv").then(data => {
-  window.originalCrimeData = data; // Store raw data globally to reuse for filtering
-  buildLeaderboard(data); // Initial leaderboard render using full dataset
+document.addEventListener("DOMContentLoaded", () => {
 
-  // === MAIN FUNCTION TO BUILD THE LEADERBOARD ===
-  function buildLeaderboard(data) {
-    const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
-    const delays = {};
-    const crimeCounts = {};
-    const monthlyDelays = {};
+  d3.csv("../data/crime_clean.csv").then(data => {
+    window.originalCrimeData = data; // Store raw data globally to reuse for filtering
+    buildLeaderboard(data); // Initial leaderboard render using full dataset
 
-    // === STEP 1: Organize data by cluster and compute reporting delays ===
-    data.forEach(d => {
-      const start = parseTime(d.start_date);
-      const report = parseTime(d.report_date);
-      const cluster = d.neighborhood_cluster;
+    // === FILL IN DDL FOR COMPARING ===
+    const dropdown1 = document.getElementById("neighborhood1");
+    const dropdown2 = document.getElementById("neighborhood2");
 
-      if (start && report && cluster && clusterNames[cluster]) {
-        const diffHours = (report - start) / (1000 * 60 * 60);
-        if (diffHours >= 0 && diffHours < 720) {
-          if (!delays[cluster]) delays[cluster] = [];
-          if (!crimeCounts[cluster]) crimeCounts[cluster] = 0;
-          delays[cluster].push(diffHours);
-          crimeCounts[cluster]++;
+    Object.entries(clusterNames).forEach(([id, name]) => {
+      const option1 = document.createElement("option");
+      option1.value = id;
+      option1.textContent = name;
 
-          // Group by month for trend and form calculation
-          const monthKey = `${report.getFullYear()}-${String(report.getMonth() + 1).padStart(2, '0')}`;
-          if (!monthlyDelays[cluster]) monthlyDelays[cluster] = {};
-          if (!monthlyDelays[cluster][monthKey]) monthlyDelays[cluster][monthKey] = [];
-          monthlyDelays[cluster][monthKey].push(diffHours);
-        }
+      const option2 = option1.cloneNode(true);
+
+      dropdown1.appendChild(option1);
+      dropdown2.appendChild(option2);
+    });
+
+    function updateBoxplots() {
+      const cluster1 = dropdown1.value;
+      const cluster2 = dropdown2.value;
+      const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+      if (!cluster1 && !cluster2) return;
+
+      // Verzamel reporting times
+      const getTimes = cluster => window.originalCrimeData
+        .filter(d => d.neighborhood_cluster === cluster)
+        .map(d => {
+          const start = parseTime(d.start_date);
+          const report = parseTime(d.report_date);
+          return (report - start) / (1000 * 60 * 60);
+        })
+        .filter(h => h >= 0 && h < 720);
+
+
+      const times1 = cluster1 ? getTimes(cluster1) : [];
+      const times2 = cluster2 ? getTimes(cluster2) : [];
+
+      function filteredMax(times) {
+        const sorted = [...times].sort((a, b) => a - b);
+        const q1 = d3.quantileSorted(sorted, 0.25);
+        const q3 = d3.quantileSorted(sorted, 0.75);
+        const iqr = q3 - q1;
+        return d3.max(sorted.filter(d => d <= q3 + 1.5 * iqr));
       }
-    });
 
-    // === STEP 2: Determine recent months ===
-    const allMonths = new Set();
-    Object.values(monthlyDelays).forEach(clusterMonths => {
-      Object.keys(clusterMonths).forEach(month => allMonths.add(month));
-    });
-    const sortedMonths = Array.from(allMonths).sort(); 
-    const last5Months = sortedMonths.slice(-5);
-    const lastTwoMonths = sortedMonths.slice(-2);
+      const max1 = times1.length ? filteredMax(times1) : 0;
+      const max2 = times2.length ? filteredMax(times2) : 0;
 
-    // === STEP 3: Build "form" performance indicators per cluster ===
-    const formDict = {};
-    Object.entries(monthlyDelays).forEach(([cluster, monthData]) => {
-      const form = last5Months.map(month => {
-        const hours = monthData[month];
-        if (!hours || hours.length === 0) return "🟩"; 
-        const avg = d3.mean(hours);
-        if (avg < 20) return "🟩";
-        if (avg < 30) return "🟨";
-        return "🟥";
-      });
-      formDict[cluster] = form.join("");
-    });
 
-    // === STEP 4: Compute rankings per month to determine trends ===
-    const monthlyAvg = {};
-    Object.entries(monthlyDelays).forEach(([cluster, monthData]) => {
-      Object.entries(monthData).forEach(([month, values]) => {
-        if (!monthlyAvg[month]) monthlyAvg[month] = [];
-        const avg = d3.mean(values);
-        monthlyAvg[month].push({ cluster, avg });
-      });
-    });
+      console.log("Max1:", max1);
+      console.log("Max2:", max2);
+      const sharedMax = Math.max(max1, max2);
 
-    const ranks = {};
-    lastTwoMonths.forEach(month => {
-      const list = monthlyAvg[month];
-      if (!list) return;
-      list.sort((a, b) => a.avg - b.avg);
-      ranks[month] = {};
-      list.forEach((item, index) => {
-        ranks[month][item.cluster] = index + 1;
-      });
-    });
 
-    function getTrendFromRanking(cluster, ranks, lastTwoMonths) {
-      const [prevMonth, currMonth] = lastTwoMonths;
-      const prevRank = ranks[prevMonth]?.[cluster];
-      const currRank = ranks[currMonth]?.[cluster];
-
-      if (!prevRank || !currRank) return "➖";
-
-      if (currRank < prevRank) return "🔼";
-      if (currRank > prevRank) return "🔽";
-      return "➖";
+      if (cluster1) drawBoxplot(cluster1, "boxplot1", sharedMax);
+      if (cluster2) drawBoxplot(cluster2, "boxplot2", sharedMax);
     }
 
-    
-    // === STEP 5: Build summary statistics per cluster ===
-    const averages = Object.entries(delays).map(([cluster, hours]) => {
-      return {
-        cluster,
-        avg: d3.mean(hours),
-        total_crimes: crimeCounts[cluster],
-        trend: null,
-        form: formDict[cluster] || "🟩🟩🟩🟩🟩"
-      };
+    dropdown1.addEventListener("change", updateBoxplots);
+    dropdown2.addEventListener("change", updateBoxplots);
+
+
+
+    // === MAIN FUNCTION TO BUILD THE LEADERBOARD ===
+    function buildLeaderboard(data) {
+      const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+      const delays = {};
+      const crimeCounts = {};
+      const monthlyDelays = {};
+
+      // === STEP 1: Organize data by cluster and compute reporting delays ===
+      data.forEach(d => {
+        const start = parseTime(d.start_date);
+        const report = parseTime(d.report_date);
+        const cluster = d.neighborhood_cluster;
+
+        if (start && report && cluster && clusterNames[cluster]) {
+          const diffHours = (report - start) / (1000 * 60 * 60);
+          if (diffHours >= 0 && diffHours < 720) {
+            if (!delays[cluster]) delays[cluster] = [];
+            if (!crimeCounts[cluster]) crimeCounts[cluster] = 0;
+            delays[cluster].push(diffHours);
+            crimeCounts[cluster]++;
+
+            // Group by month for trend and form calculation
+            const monthKey = `${report.getFullYear()}-${String(report.getMonth() + 1).padStart(2, '0')}`;
+            if (!monthlyDelays[cluster]) monthlyDelays[cluster] = {};
+            if (!monthlyDelays[cluster][monthKey]) monthlyDelays[cluster][monthKey] = [];
+            monthlyDelays[cluster][monthKey].push(diffHours);
+          }
+        }
+      });
+
+      // === STEP 2: Determine recent months ===
+      const allMonths = new Set();
+      Object.values(monthlyDelays).forEach(clusterMonths => {
+        Object.keys(clusterMonths).forEach(month => allMonths.add(month));
+      });
+      const sortedMonths = Array.from(allMonths).sort(); 
+      const last5Months = sortedMonths.slice(-5);
+      const lastTwoMonths = sortedMonths.slice(-2);
+
+      // === STEP 3: Build "form" performance indicators per cluster ===
+      const formDict = {};
+      Object.keys(monthlyDelays).forEach(cluster => {
+        formDict[cluster] = ""; // of eventueel "📈" als je wil
+      });
+
+
+      // === STEP 4: Compute rankings per month to determine trends ===
+      const monthlyAvg = {};
+      Object.entries(monthlyDelays).forEach(([cluster, monthData]) => {
+        Object.entries(monthData).forEach(([month, values]) => {
+          if (!monthlyAvg[month]) monthlyAvg[month] = [];
+          const avg = d3.mean(values);
+          monthlyAvg[month].push({ cluster, avg });
+        });
+      });
+
+      const ranks = {};
+      lastTwoMonths.forEach(month => {
+        const list = monthlyAvg[month];
+        if (!list) return;
+        list.sort((a, b) => a.avg - b.avg);
+        ranks[month] = {};
+        list.forEach((item, index) => {
+          ranks[month][item.cluster] = index + 1;
+        });
+      });
+      
+      // === STEP 5: Build summary statistics per cluster ===
+      const averages = Object.entries(delays).map(([cluster, hours]) => {
+        return {
+          cluster,
+          avg: d3.mean(hours),
+          total_crimes: crimeCounts[cluster],
+          trend: null,
+          form: formDict[cluster] || "🟩🟩🟩🟩🟩"
+        };
+      });
+
+      // Sort by average reporting time (ascending)
+      averages.sort((a, b) => a.avg - b.avg);
+
+
+      // Determine rank trends
+      averages.forEach((entry, index) => {
+        const cluster = entry.cluster;
+        const [prevMonth, currMonth] = lastTwoMonths;
+        const prevRank = ranks[prevMonth]?.[cluster];
+
+        const currRank = index + 1;
+
+        if (!prevRank) {
+            entry.trend = "➖";
+        } else if (currRank < prevRank) {
+            entry.trend = "🔼";
+        } else if (currRank > prevRank) {
+            entry.trend = "🔽";
+        } else {
+            entry.trend = "➖";
+        }
+      });
+      const top5 = averages.slice(0, 5);
+
+      // === STEP 6: Render top 10 in HTML leaderboard ===
+      const leaderboard = document.getElementById("leaderboard");
+      leaderboard.innerHTML = "";
+      let actualRank = 1;
+
+      top5.forEach(entry => {
+        const clusterName = clusterNames[entry.cluster];
+        if (!clusterName) return;
+
+        const rank = actualRank === 1 ? "🥇" : actualRank === 2 ? "🥈" : actualRank === 3 ? "🥉" : `#${actualRank}`;
+        const hours = formatHoursToHM(entry.avg);
+        const form = entry.form;
+        const trend = entry.trend;
+        const crimes = entry.total_crimes;
+
+        const li = document.createElement("li");
+        li.classList.add("leaderboard-row");
+        li.innerHTML = `
+            <div class="rank">${rank}</div>
+            <div class="neighborhood">${clusterName}</div>
+            <div class="time" data-cluster="${entry.cluster}">${formatHoursToHM(entry.avg)}</div>
+            <div class="form"><span class="trend-icon">📊</span></div>
+            <div class="trend">${trend}</div>
+            <div class="crimes">📝 ${crimes}</div>
+        `;
+        leaderboard.appendChild(li);
+        actualRank++;
+      });
+
+
+      document.querySelectorAll(".time").forEach(el => {
+        el.style.cursor = "pointer";
+        el.addEventListener("click", () => {
+          const cluster = el.dataset.cluster;
+          showARTChart(cluster);
+        });
+      });
+
+      document.querySelectorAll(".form .trend-icon").forEach(icon => {
+        icon.style.cursor = "pointer";
+        icon.addEventListener("click", () => {
+          const cluster = icon.closest(".leaderboard-row").querySelector(".time").dataset.cluster;
+          showRecentTrendLine(cluster);
+        });
+      });
+
+
+
+
+
+    }
+
+    document.getElementById("leaderboard-search").addEventListener("input", function () {
+      const query = this.value.toLowerCase();
+
+      document.querySelectorAll(".leaderboard-row").forEach(row => {
+        const name = row.querySelector(".neighborhood")?.textContent?.toLowerCase() || "";
+        if (name.includes(query)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
     });
-
-    // Sort by average reporting time (ascending)
-    averages.sort((a, b) => a.avg - b.avg);
+   
 
 
-    // Determine rank trends
-    averages.forEach((entry, index) => {
-      const cluster = entry.cluster;
-      const [prevMonth, currMonth] = lastTwoMonths;
-      const prevRank = ranks[prevMonth]?.[cluster];
-
-      const currRank = index + 1;
-
-      if (!prevRank) {
-          entry.trend = "➖";
-      } else if (currRank < prevRank) {
-          entry.trend = "🔼";
-      } else if (currRank > prevRank) {
-          entry.trend = "🔽";
-      } else {
-          entry.trend = "➖";
-      }
-    });
-    const top10 = averages.slice(0, 10);
-
-    // === STEP 6: Render top 10 in HTML leaderboard ===
-    const leaderboard = document.getElementById("leaderboard");
-    leaderboard.innerHTML = "";
-    let actualRank = 1;
-
-    top10.forEach(entry => {
-      const clusterName = clusterNames[entry.cluster];
-      if (!clusterName) return;
-
-      const rank = actualRank === 1 ? "🥇" : actualRank === 2 ? "🥈" : actualRank === 3 ? "🥉" : `#${actualRank}`;
-      const hours = entry.avg.toFixed(2);
-      const form = entry.form;
-      const trend = entry.trend;
-      const crimes = entry.total_crimes;
-
-      const li = document.createElement("li");
-      li.classList.add("leaderboard-row");
-      li.innerHTML = `
-          <div class="rank">${rank}</div>
-          <div class="neighborhood">${clusterName}</div>
-          <div class="time">${hours}h</div>
-          <div class="form">${form} <span class="neutral">◽</span></div>
-          <div class="trend">${trend}</div>
-          <div class="crimes">📝 ${crimes}</div>
-      `;
-      leaderboard.appendChild(li);
-      actualRank++;
-    });
-  }
-
-  // === FILTER TILE INTERACTIES (Visual toggles) ===
-  document.querySelectorAll(".filter-tile").forEach(tile => {
-    tile.addEventListener("click", () => {
-      tile.classList.toggle("active");
-    });
-  });
-
-  // === FILTER CONFIRM BUTTON ===
-  document.getElementById("apply-filters").addEventListener("click", () => {
-    const filters = {
-      crime_type: [],
-      shift: [],
-      weapon: []
-    };
-
-    // Collect all selected filtered values
-    document.querySelectorAll(".tile-group").forEach(group => {
-      const category = group.dataset.filter;
-      group.querySelectorAll(".filter-tile.active").forEach(tile => {
-        filters[category].push(tile.dataset.value.toLowerCase());
+    // === FILTER TILE INTERACTIES (Visual toggles) ===
+    document.querySelectorAll(".filter-tile").forEach(tile => {
+      tile.addEventListener("click", () => {
+        tile.classList.toggle("active");
       });
     });
 
-    // === RELOAD LEADERBOARD WITH FILTERS ===
-    applyFilters(filters);
-  });
 
-
-  // === VISUAL FEEDBACK ON CONFIRM BUTTON ===
-  const applyButton = document.getElementById('apply-filters');
-  applyButton.addEventListener('click', () => {
-    applyButton.classList.add('active');
-    setTimeout(() => {
-      applyButton.classList.remove('active');
-    }, 750); 
 
     
-  });
+    // === FILTER CONFIRM BUTTON ===
+    document.getElementById("apply-filters").addEventListener("click", () => {
+      const filters = {
+        crime_type: [],
+        shift: [],
+        weapon: []
+      };
 
-  // === APPLY FILTERS ===
-  function applyFilters(filters) {
-    const filtered = window.originalCrimeData.filter(d => {
-      const offenseGroup = d.offense_group?.toLowerCase();
-      const shift = d.shift?.toLowerCase();
-      const method = d.method?.toLowerCase();
+      // Collect all selected filtered values
+      document.querySelectorAll(".tile-group").forEach(group => {
+        const category = group.dataset.filter;
+        group.querySelectorAll(".filter-tile.active").forEach(tile => {
+          filters[category].push(tile.dataset.value.toLowerCase());
+        });
+      });
 
-      const matchType = filters.crime_type.length === 0 || filters.crime_type.includes(offenseGroup);
-      const matchShift = filters.shift.length === 0 || filters.shift.includes(shift);
-      const matchWeapon = filters.weapon.length === 0 || filters.weapon.includes(method);
-
-      return matchType && matchShift && matchWeapon;
+      // === RELOAD LEADERBOARD WITH FILTERS ===
+      applyFilters(filters);
     });
 
-    buildLeaderboard(filtered); // Rebuild Leaderboard with filtered data
-  }
+    
+    // === FILTER CLEAR ALL BUTTON ===
+    document.getElementById("clear-filters").addEventListener("click", () => {
+      // 1. Remove all filters
+      document.querySelectorAll(".filter-tile.active").forEach(tile => {
+        tile.classList.remove("active");
+      });
 
+      // 2. Refresh leaderboards
+      buildLeaderboard(window.originalCrimeData); 
+    });
+
+
+
+    // === VISUAL FEEDBACK ON CONFIRM BUTTON ===
+    const applyButton = document.getElementById('apply-filters');
+    applyButton.addEventListener('click', () => {
+      applyButton.classList.add('active');
+      setTimeout(() => {
+        applyButton.classList.remove('active');
+      }, 750); 
+
+      
+    });
+
+    // === APPLY FILTERS ===
+    function applyFilters(filters) {
+      const filtered = window.originalCrimeData.filter(d => {
+        const offenseGroup = d.offense_group?.toLowerCase();
+        const shift = d.shift?.toLowerCase();
+        const method = d.method?.toLowerCase();
+
+        const matchType = filters.crime_type.length === 0 || filters.crime_type.includes(offenseGroup);
+        const matchShift = filters.shift.length === 0 || filters.shift.includes(shift);
+        const matchWeapon = filters.weapon.length === 0 || filters.weapon.includes(method);
+
+        return matchType && matchShift && matchWeapon;
+      });
+
+      buildLeaderboard(filtered); // Rebuild Leaderboard with filtered data
+    }
+
+    // === Helper ===
+    function formatHoursToHM(hoursFloat) {
+      const totalMinutes = Math.round(hoursFloat * 60);
+      const h = Math.floor(totalMinutes / 60);
+      const m = totalMinutes % 60;
+      return `${h}h ${m}m`;
+    }
+
+
+
+    // === DRAW BOXPLOTS ===
+    function drawBoxplot(clusterId, containerId, sharedMax = null) {
+      const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+      const container = d3.select(`#${containerId}`);
+      container.selectAll("*").remove(); // Leegmaken
+
+      const data = window.originalCrimeData
+        .filter(d => d.neighborhood_cluster === clusterId)
+        .map(d => {
+          const start = parseTime(d.start_date);
+          const report = parseTime(d.report_date);
+          return (report - start) / (1000 * 60 * 60);
+        })
+        .filter(hours => hours >= 0 && hours < 720);
+
+      if (!data.length) {
+        container.append("p").text("No data available.");
+        return;
+      }
+
+      // Bereken boxplot statistieken
+      const sorted = data.sort((a, b) => a - b);
+      const q1 = d3.quantileSorted(sorted, 0.25);
+      const median = d3.quantileSorted(sorted, 0.5);
+      const q3 = d3.quantileSorted(sorted, 0.75);
+      const iqr = q3 - q1;
+      const min = d3.min(sorted.filter(d => d >= (q1 - 1.5 * iqr)));
+      const max = d3.max(sorted.filter(d => d <= (q3 + 1.5 * iqr)));
+
+      const mean = d3.mean(data);
+      const std = d3.deviation(data);
+      const n = data.length;
+      const marginOfError = 1.96 * (std / Math.sqrt(n));
+      const ciLower = mean - marginOfError;
+      const ciUpper = mean + marginOfError;
+
+
+      // Visualisatie parameters
+      const width = 400;
+      const height = 300;
+      const margin = { top: 20, right: 30, bottom: 40, left: 50 };
+
+      const svg = container.append("svg")
+        .attr("width", "100%")
+        .attr("height", "300")
+        .attr("viewBox", "0 0 400 300")
+        .attr("preserveAspectRatio", "xMidYMid meet");
+
+
+
+      const x = d3.scaleBand()
+        .range([margin.left, width - margin.right])
+        .domain([clusterNames[clusterId]])
+        .padding(0.4);
+
+      const y = d3.scaleLinear()
+        .domain([0, (sharedMax ?? max) * 1.1])
+        .range([height - margin.bottom, margin.top]);
+
+
+      // Y-as
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+
+      // Middenlijn
+      svg.append("line")
+        .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() / 2)
+        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() / 2)
+        .attr("y1", y(min))
+        .attr("y2", y(max))
+        .attr("stroke", "#aaa")
+        .attr("stroke-width", 2);
+
+      // Box
+      svg.append("rect")
+        .attr("x", x(clusterNames[clusterId]))
+        .attr("y", y(q3))
+        .attr("height", y(q1) - y(q3))
+        .attr("width", x.bandwidth())
+        .attr("fill", "#ff4444")
+        .attr("stroke", "#000");
+
+      // Median lijn
+      svg.append("line")
+        .attr("x1", x(clusterNames[clusterId]))
+        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth())
+        .attr("y1", y(median))
+        .attr("y2", y(median))
+        .attr("stroke", "#000")
+        .attr("stroke-width", 2);
+
+      // Whisker lijnen
+      svg.append("line")
+        .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() * 0.25)
+        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() * 0.75)
+        .attr("y1", y(min))
+        .attr("y2", y(min))
+        .attr("stroke", "#000");
+
+      svg.append("line")
+        .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() * 0.25)
+        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() * 0.75)
+        .attr("y1", y(max))
+        .attr("y2", y(max))
+        .attr("stroke", "#000");
+
+      // === Confidence Interval visueel (verticale lijn naast box) ===
+      svg.append("line")
+        .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() + 8)
+        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() + 8)
+        .attr("y1", y(ciLower))
+        .attr("y2", y(ciUpper))
+        .attr("stroke", "#00BFFF")
+        .attr("stroke-width", 2)
+        .attr("stroke-dasharray", "2,2")
+        .attr("opacity", 0.7);
+
+
+      // Stats
+      const statsBox = container.append("div")
+        .attr("class", "boxplot-stats")
+        .style("margin-top", "0.75rem")
+        .style("font-size", "0.9rem")
+        .style("color", "#ccc");
+
+      statsBox.html(`
+        <div><strong>Fastest Time:</strong> ${formatHoursToHM(min)}</div>
+        <div><strong>Average Time:</strong> ${formatHoursToHM(d3.mean(data))}</div>
+        <div><strong>Slowest Time:</strong> ${formatHoursToHM(max)}</div>
+        <div><strong>Total Crimes:</strong> ${data.length}</div>
+        <div><strong>95% CI:</strong> ${Math.round(ciLower)}h – ${Math.round(ciUpper)}h</div>
+
+
+      `);
+
+    }
+
+    function showARTChart(clusterId, selector = "#trend-chart-container") {
+      const safeId = clusterId.replace(/\s+/g, "-");
+
+      // Verwijder alle grafieken als cluster verandert
+      if (activeClusterId && activeClusterId !== clusterId) {
+        document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
+        activeClusterId = clusterId;
+      } else if (!activeClusterId) {
+        activeClusterId = clusterId;
+      }
+      
+
+      // Als deze chart al bestaat → stop
+      if (document.querySelector(`#trend-chart-${safeId}-bar`)) return;
+
+      // Container
+      const container = d3.select(selector);
+      const box = container.append("div")
+        .attr("class", "trend-chart-box")
+        .attr("id", `trend-chart-${safeId}-bar`)
+        .style("display", "inline-block")
+        .style("margin-right", "2rem");
+
+      // === Je originele ART-code hieronder ===
+      const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+      const formatMonth = d3.timeFormat("%b %Y");
+      const data = window.originalCrimeData.filter(d => d.neighborhood_cluster === clusterId);
+      const grouped = {};
+
+      data.forEach(d => {
+        const start = parseTime(d.start_date);
+        const report = parseTime(d.report_date);
+        if (!start || !report) return;
+        const diff = (report - start) / (1000 * 60 * 60);
+        if (diff < 0 || diff > 720) return;
+        const monthKey = formatMonth(report);
+        if (!grouped[monthKey]) grouped[monthKey] = [];
+        grouped[monthKey].push(diff);
+      });
+
+      const averages = Object.entries(grouped).map(([month, values]) => ({
+        month,
+        avg: d3.mean(values)
+      })).sort((a, b) => d3.ascending(new Date(a.month), new Date(b.month)));
+
+      const width = 600;
+      const height = 400;
+      const margin = { top: 30, right: 30, bottom: 40, left: 60 };
+
+      const svg = box.append("svg")
+        .attr("width", "100%") // Maakt het responsief binnen de helft
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`) // Houdt interne schaal correct
+        .attr("preserveAspectRatio", "xMidYMid meet"); // Optioneel, houd verhouding
+
+
+
+
+      const x = d3.scaleBand()
+        .domain(averages.map(d => d.month))
+        .range([margin.left, width - margin.right])
+        .padding(0.1);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(averages, d => d.avg) * 1.1])
+        .range([height - margin.bottom, margin.top]);
+
+      svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x));
+
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+
+      svg.selectAll("rect")
+        .data(averages)
+        .enter()
+        .append("rect")
+        .attr("x", d => x(d.month))
+        .attr("y", d => y(d.avg))
+        .attr("width", x.bandwidth())
+        .attr("height", d => y(0) - y(d.avg))
+        .attr("fill", "#ff4444");
+
+      svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", margin.top - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#ccc")
+        .attr("font-size", "16px")
+        .text(`Monthly Avg. Reporting Time – ${clusterNames[clusterId]}`);
+    }
+
+
+    function showRecentTrendLine(clusterId, selector = "#trend-chart-container") {
+      console.log("showRecentTrendLine called for", clusterId);
+
+      const safeId = clusterId.replace(/\s+/g, "-");
+
+      // Verwijder alle grafieken als cluster verandert
+      if (activeClusterId && activeClusterId !== clusterId) {
+        document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
+        activeClusterId = clusterId;
+      }
+      
+
+      // Als deze chart al bestaat → stop
+      if (document.querySelector(`#trend-chart-${safeId}-line`)) return;
+
+      // Container
+      const container = d3.select(selector);
+      const box = container.append("div")
+        .attr("class", "trend-chart-box")
+        .attr("id", `trend-chart-${safeId}-line`)
+        .style("display", "inline-block");
+
+      // === Je originele line chart code hieronder ===
+      const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+      const formatMonthKey = d3.timeFormat("%Y-%m");
+      const formatLabel = d3.timeFormat("%b");
+
+      const data = window.originalCrimeData.filter(d => d.neighborhood_cluster === clusterId);
+      const monthly = {};
+
+      data.forEach(d => {
+        const start = parseTime(d.start_date);
+        const report = parseTime(d.report_date);
+        if (!start || !report) return;
+        const diff = (report - start) / (1000 * 60 * 60);
+        if (diff < 0 || diff > 720) return;
+        const key = formatMonthKey(report);
+        if (!monthly[key]) monthly[key] = [];
+        monthly[key].push(diff);
+      });
+
+      const averages = Object.entries(monthly).map(([month, values]) => ({
+        month,
+        avg: d3.mean(values)
+      })).sort((a, b) => a.month.localeCompare(b.month));
+
+      const last5 = averages.slice(-5);
+      const monthLabels = last5.map(d => formatLabel(new Date(d.month + "-01")));
+
+      const width = 700;
+      const height = 400;
+      const margin = { top: 30, right: 30, bottom: 40, left: 60 };
+
+      const svg = box.append("svg")
+        .attr("width", "100%") // Maakt het responsief binnen de helft
+        .attr("height", height)
+        .attr("viewBox", `0 0 ${width} ${height}`) // Houdt interne schaal correct
+        .attr("preserveAspectRatio", "xMidYMid meet"); // Optioneel, houd verhouding
+
+
+      const x = d3.scalePoint()
+        .domain(monthLabels)
+        .range([margin.left, width - margin.right]);
+
+      const y = d3.scaleLinear()
+        .domain([0, d3.max(last5, d => d.avg) * 1.1])
+        .range([height - margin.bottom, margin.top]);
+
+      svg.append("g")
+        .attr("transform", `translate(0,${height - margin.bottom})`)
+        .call(d3.axisBottom(x));
+
+      svg.append("g")
+        .attr("transform", `translate(${margin.left},0)`)
+        .call(d3.axisLeft(y));
+
+      const line = d3.line()
+        .x((d, i) => x(monthLabels[i]))
+        .y(d => y(d.avg));
+
+      svg.append("path")
+        .datum(last5)
+        .attr("fill", "none")
+        .attr("stroke", "#00BFFF")
+        .attr("stroke-width", 2)
+        .attr("d", line);
+
+      svg.selectAll("circle")
+        .data(last5)
+        .enter()
+        .append("circle")
+        .attr("cx", (d, i) => x(monthLabels[i]))
+        .attr("cy", d => y(d.avg))
+        .attr("r", 4)
+        .attr("fill", "#00BFFF");
+
+      svg.append("text")
+        .attr("x", width / 2)
+        .attr("y", margin.top - 10)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#ccc")
+        .attr("font-size", "14px")
+        .text(`ART trend (last 5 months) – ${clusterNames[clusterId]}`);
+    }
+
+
+
+
+  });
 });

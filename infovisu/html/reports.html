@@ -11,9 +11,10 @@
   <!-- Optional libraries: Leaflet (maps), Chart.js (graphs), D3 (data) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="../js/reports.js"></script>
+  <!-- Chart.js core -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
 </head>
 
 <body>
@@ -34,12 +35,38 @@
   <!-- === PAGE INTRO HEADER === -->
   <header>
     <h1><span class="highlight">CrimeWatch DC</span></h1>
-    <p class="subtitle-big">Discover the top 10 fastest-reporting neighborhoods in DC.</p>
+    <p class="subtitle-big">Discover all insights about the reportings in DC.</p>
     <p class="subtitle-small">Quick reporting means safer streets, stronger communities, and smarter response.</p>
   </header>
 
+
+
+
+
   <!-- === MAIN visu CONTENT === -->
   <main class="visu">
+
+    <section class="compare-section">
+      <div class="compare-header">
+        <div class="compare-column">
+          <label for="neighborhood1">Neighborhood 1:</label>
+          <select id="neighborhood1">
+            <option value="">Select...</option>
+          </select>
+          <div id="boxplot1"></div>
+        </div>
+
+        <div class="compare-column">
+          <label for="neighborhood2">Neighborhood 2:</label>
+          <select id="neighborhood2">
+            <option value="">Select...</option>
+          </select>
+          <div id="boxplot2"></div>
+        </div>
+      </div>
+    </section>
+
+
 
     <!-- Top banner with logo, title and time range -->
     <div class="page-banner">
@@ -51,7 +78,7 @@
         </div>
       </div>
       <div class="banner-title-block">
-        <h1>🏆 Top 10 – Fastest Reported Neighborhoods</h1>
+        <h1>Leaderboard - Fastest Reported Neighborhoods</h1>
         <div class="date-range-bar">
           <span class="date-label">1 Jan</span>
           <div class="bar"></div>
@@ -63,49 +90,53 @@
     <!-- Three-column layout: Legend | Leaderboard | Filters -->
     <div class="visu-content">
 
-      <!-- === LEFT: INFO LEGEND PANEL === -->
-      <aside class="info-panel">
-        <div class="legend-section">
-          <div class="legend-subtitle">ART</div>
-          <p>Average Reporting Time (in hours)</p>
+      <!-- === Top: FILTER TILE PANEL === -->
+      <aside class="filter-section">
+
+        <!-- === FILTERS IN DRIE KOLOMMEN === -->
+        <div class="filter-row">
+          <!-- Filter 1: Crime Type -->
+          <div class="filter-column">
+            <h3>Filter Crime Type</h3>
+            <div class="tile-group" data-filter="crime_type">
+              <div class="filter-tile" data-value="violent">Violent</div>
+              <div class="filter-tile" data-value="property">Property</div>
+            </div>
+          </div>
+
+          <!-- Filter 2: Shift -->
+          <div class="filter-column">
+            <h3>Filter Shift</h3>
+            <div class="tile-group" data-filter="shift">
+              <div class="filter-tile" data-value="day">Day</div>
+              <div class="filter-tile" data-value="evening">Evening</div>
+              <div class="filter-tile" data-value="midnight">Midnight</div>
+            </div>
+          </div>
+
+          <!-- Filter 3: Weapon -->
+          <div class="filter-column">
+            <h3>Filter Weapon</h3>
+            <div class="tile-group" data-filter="weapon">
+              <div class="filter-tile" data-value="gun">Gun</div>
+              <div class="filter-tile" data-value="knife">Knife</div>
+            </div>
+          </div>
         </div>
 
-        <div class="legend-section">
-          <div class="legend-subtitle">Recent 5 months</div>
-          <p>Monthly performance colors:</p>
-          <ul>
-            <li>🟩 Fast &lt; 20 hours</li>
-            <li>🟨 Moderate 20–30 hours</li>
-            <li>🟥 Slow &gt; 30 hours</li>
-          </ul>
+        <!-- Confirm Button onderaan gecentreerd -->
+        <div class="filter-confirm">
+          <button id="apply-filters">Confirm</button>
+          <button id="clear-filters" class="secondary-button">Clear All</button>
         </div>
 
-        <div class="legend-section">
-          <div class="legend-subtitle">Trend</div>
-          <p>Ranking evolution vs. last month:</p>
-          <ul>
-            <li>🔼 Improved</li>
-            <li>🔽 Dropped</li>
-            <li>➖ Stable</li>
-          </ul>
-        </div>
-
-        <div class="legend-section">
-          <div class="legend-subtitle">Reports</div>
-          <p>Total crime reports submitted in 2023</p>
-        </div>
-
-        <div class="legend-section">
-          <p style="font-size: 0.75rem; color: #999;">
-            This leaderboard highlights the 10 fastest-reporting neighborhoods in Washington DC (Jan–Dec 2023). Fast reporting indicates active communities and better emergency responsiveness.
-          </p>
-        </div>
       </aside>
-
       <!-- === CENTER: LEADERBOARD OUTPUT === -->
       <div class="main-content">
         <div class="chart-container">
           <section class="container">
+            <input type="text" id="leaderboard-search" placeholder="Search neighborhoods..." style="margin-bottom: 1rem; padding: 0.5rem; width: 100%; font-size: 1rem;" />
+
             <div class="leaderboard-header">
               <div>#</div>
               <div>Neighborhood</div>
@@ -114,45 +145,15 @@
               <div>Trend</div>
               <div>Reports</div>
             </div>
+
             <ul class="leaderboard-extended" id="leaderboard">
               <!-- Leaderboard rows inserted here dynamically via JS -->
             </ul>
+            <!-- Onder leaderboard -->
+            <div id="trend-chart-container" style="margin-top: 2rem;"></div>
           </section>
         </div>
       </div>
-
-      <!-- === RIGHT: FILTER TILE PANEL === -->
-      <aside class="filter-section">
-
-        <!-- Filter 1: Crime Type -->
-        <h3>Filter Crime Type</h3>
-        <div class="tile-group" data-filter="crime_type">
-          <div class="filter-tile" data-value="violent">🔴 Violent</div>
-          <div class="filter-tile" data-value="property">🔵 Property</div>
-          <div class="filter-tile" data-value="others">🟡 Others</div>
-        </div>
-
-        <!-- Filter 2: Shift -->
-        <h3>Filter Shift</h3>
-        <div class="tile-group" data-filter="shift">
-          <div class="filter-tile" data-value="day">🌞 Day</div>
-          <div class="filter-tile" data-value="evening">🌙 Evening</div>
-          <div class="filter-tile" data-value="midnight">🌘 Midnight</div>
-        </div>
-
-        <!-- Filter 3: Weapon -->
-        <h3>Filter Weapon</h3>
-        <div class="tile-group" data-filter="weapon">
-          <div class="filter-tile" data-value="gun">🔫 Gun</div>
-          <div class="filter-tile" data-value="knife">🔪 Knife</div>
-          <div class="filter-tile" data-value="none">👊 None</div>
-          <div class="filter-tile" data-value="other">🧨 Other</div>
-        </div>
-
-
-        <!-- Confirm Button -->
-        <button id="apply-filters">✔️ Confirm</button>
-      </aside>
 
     </div> <!-- end .visu-content -->
   </main>
@@ -162,5 +163,6 @@
     <p>© 2025 CrimeWatch DC – Built with ❤️</p>
   </footer>
 
+  <script src="../js/reports.js"></script>
 </body>
 </html>
