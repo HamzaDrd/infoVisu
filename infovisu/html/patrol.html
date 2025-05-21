@@ -193,6 +193,7 @@
           <div>
             <h3>Monthly Crime Evolution</h3>
             <p class="subtitle-small">Get the big-picture of how crime evolved through the seasons of 2023.</p>
+            <p class="help-text">Tip: Click on a bar to view detailed crime statistics for that month. Select a month to update the weekly average chart to that month and press outside of the chart to unselect.</p>
             <div class="chart-container">
               <svg id="timeline-chart-svg" width="400" height="300"></svg>
             </div>
@@ -207,6 +208,7 @@
           <div>
             <h3>Daily Crime Evolution</h3>
             <p class="subtitle-small">Each square is one date, shaded by total incidents—so you can instantly spot “red-hot” days.</p>
+            <p class="help-text">Tip: Click on a square to view detailed crime statistics for that day.</p>
             <div class="chart-container">
               <svg id="daily-crime-chart-svg" width="400" height="300"></svg>
             </div>
@@ -214,7 +216,7 @@
         </div>
 
       </div>
-      <div id="timeline-tooltip" class="tooltip"></div>
+      <div id="timeline-tooltip" class="crime-evolution-tooltip"></div>
     </div>
   </section>
 
@@ -243,14 +245,6 @@
       trendView.style.display = "block";
       toggleButton.textContent = "Switch to Patrol View";
 
-      /*
-      // Trigger rendering of visualizations after making the trend-view visible
-      setTimeout(() => {
-        drawBarChartWithFilters();
-        drawHeatCalendarWithFilters();
-        drawDayOfWeekChart(data);
-      }, 0);
-      */
     }
   });
 </script>

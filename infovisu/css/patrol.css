@@ -363,18 +363,19 @@ header {
   gap: 20px;
 }
 
-.tooltip {
-  position: absolute;
-  text-align: left;
-  padding: 8px;
-  font-size: 14px;
-  background: rgba(0,0,0,0.75);
-  color: white;
-  border-radius: 4px;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
+  .crime-evolution-tooltip {
+    position: absolute;
+    text-align: left;
+    padding: 8px;
+    font-size: 14px;
+    background: #000000;
+    color: white;
+    border-radius: 4px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 1100; /* Ensure it is above the modal */
+  }
 
 .timeline-filter-panel {
   display: flex;
@@ -748,6 +749,13 @@ stroke: #444;
   background: #222;
   color: #eee;
   border: 1px solid #444;
+}
+
+.help-text {
+  font-size: 14px;
+  color: #bbb;
+  margin-top: 5px;
+  font-style: italic;
 }
 
 
