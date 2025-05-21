@@ -2,17 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CrimeWatch DC – Nieuwe Pagina</title>
+  <title>CrimeWatch DC – Reports info</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Shared stylesheet for consistent styling with other pages -->
   <link rel="stylesheet" href="../css/reports.css" />
-
-  <!-- Optional libraries: Leaflet (maps), Chart.js (graphs), D3 (data) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
-  <!-- Chart.js core -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
 </head>
@@ -124,7 +120,7 @@
           </div>
         </div>
 
-        <!-- Confirm Button onderaan gecentreerd -->
+        <!-- Buttons -->
         <div class="filter-confirm">
           <button id="apply-filters">Confirm</button>
           <button id="clear-filters" class="secondary-button">Clear All</button>
@@ -149,13 +145,12 @@
             <ul class="leaderboard-extended" id="leaderboard">
               <!-- Leaderboard rows inserted here dynamically via JS -->
             </ul>
-            <!-- Onder leaderboard -->
             <div id="trend-chart-container" style="margin-top: 2rem;"></div>
           </section>
         </div>
       </div>
 
-    </div> <!-- end .visu-content -->
+    </div> 
   </main>
 
   <!-- === FOOTER === -->

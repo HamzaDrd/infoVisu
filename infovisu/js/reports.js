@@ -57,8 +57,8 @@ let activeChartType = null;
 document.addEventListener("DOMContentLoaded", () => {
 
   d3.csv("../data/crime_clean.csv").then(data => {
-    window.originalCrimeData = data; // Store raw data globally to reuse for filtering
-    buildLeaderboard(data); // Initial leaderboard render using full dataset
+    window.originalCrimeData = data; 
+    buildLeaderboard(data); // Initial leaderboard using full dataset
 
     // === FILL IN DDL FOR COMPARING ===
     const dropdown1 = document.getElementById("neighborhood1");
@@ -82,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!cluster1 && !cluster2) return;
 
-      // Verzamel reporting times
       const getTimes = cluster => window.originalCrimeData
         .filter(d => d.neighborhood_cluster === cluster)
         .map(d => {
@@ -324,12 +323,12 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // === FILTER CLEAR ALL BUTTON ===
     document.getElementById("clear-filters").addEventListener("click", () => {
-      // 1. Remove all filters
+      // Remove all filters
       document.querySelectorAll(".filter-tile.active").forEach(tile => {
         tile.classList.remove("active");
       });
 
-      // 2. Refresh leaderboards
+      // Refresh leaderboards
       buildLeaderboard(window.originalCrimeData); 
     });
 
@@ -377,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function drawBoxplot(clusterId, containerId, sharedMax = null) {
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
       const container = d3.select(`#${containerId}`);
-      container.selectAll("*").remove(); // Leegmaken
+      container.selectAll("*").remove(); 
 
       const data = window.originalCrimeData
         .filter(d => d.neighborhood_cluster === clusterId)
@@ -393,7 +392,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Bereken boxplot statistieken
       const sorted = data.sort((a, b) => a - b);
       const q1 = d3.quantileSorted(sorted, 0.25);
       const median = d3.quantileSorted(sorted, 0.5);
@@ -410,7 +408,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const ciUpper = mean + marginOfError;
 
 
-      // Visualisatie parameters
       const width = 400;
       const height = 300;
       const margin = { top: 20, right: 30, bottom: 40, left: 50 };
@@ -433,12 +430,10 @@ document.addEventListener("DOMContentLoaded", () => {
         .range([height - margin.bottom, margin.top]);
 
 
-      // Y-as
       svg.append("g")
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
 
-      // Middenlijn
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() / 2)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() / 2)
@@ -447,7 +442,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("stroke", "#aaa")
         .attr("stroke-width", 2);
 
-      // Box
       svg.append("rect")
         .attr("x", x(clusterNames[clusterId]))
         .attr("y", y(q3))
@@ -456,7 +450,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("fill", "#ff4444")
         .attr("stroke", "#000");
 
-      // Median lijn
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]))
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth())
@@ -465,7 +458,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("stroke", "#000")
         .attr("stroke-width", 2);
 
-      // Whisker lijnen
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() * 0.25)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() * 0.75)
@@ -480,7 +472,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("y2", y(max))
         .attr("stroke", "#000");
 
-      // === Confidence Interval visueel (verticale lijn naast box) ===
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() + 8)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() + 8)
@@ -492,7 +483,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("opacity", 0.7);
 
 
-      // Stats
       const statsBox = container.append("div")
         .attr("class", "boxplot-stats")
         .style("margin-top", "0.75rem")
@@ -514,7 +504,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function showARTChart(clusterId, selector = "#trend-chart-container") {
       const safeId = clusterId.replace(/\s+/g, "-");
 
-      // Verwijder alle grafieken als cluster verandert
       if (activeClusterId && activeClusterId !== clusterId) {
         document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
         activeClusterId = clusterId;
@@ -523,10 +512,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       
 
-      // Als deze chart al bestaat → stop
       if (document.querySelector(`#trend-chart-${safeId}-bar`)) return;
 
-      // Container
       const container = d3.select(selector);
       const box = container.append("div")
         .attr("class", "trend-chart-box")
@@ -534,7 +521,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .style("display", "inline-block")
         .style("margin-right", "2rem");
 
-      // === Je originele ART-code hieronder ===
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
       const formatMonth = d3.timeFormat("%b %Y");
       const data = window.originalCrimeData.filter(d => d.neighborhood_cluster === clusterId);
@@ -561,10 +547,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const margin = { top: 30, right: 30, bottom: 40, left: 60 };
 
       const svg = box.append("svg")
-        .attr("width", "100%") // Maakt het responsief binnen de helft
+        .attr("width", "100%") 
         .attr("height", height)
-        .attr("viewBox", `0 0 ${width} ${height}`) // Houdt interne schaal correct
-        .attr("preserveAspectRatio", "xMidYMid meet"); // Optioneel, houd verhouding
+        .attr("viewBox", `0 0 ${width} ${height}`) 
+        .attr("preserveAspectRatio", "xMidYMid meet"); 
 
 
 
@@ -611,24 +597,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const safeId = clusterId.replace(/\s+/g, "-");
 
-      // Verwijder alle grafieken als cluster verandert
       if (activeClusterId && activeClusterId !== clusterId) {
         document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
         activeClusterId = clusterId;
       }
       
 
-      // Als deze chart al bestaat → stop
       if (document.querySelector(`#trend-chart-${safeId}-line`)) return;
 
-      // Container
       const container = d3.select(selector);
       const box = container.append("div")
         .attr("class", "trend-chart-box")
         .attr("id", `trend-chart-${safeId}-line`)
         .style("display", "inline-block");
 
-      // === Je originele line chart code hieronder ===
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
       const formatMonthKey = d3.timeFormat("%Y-%m");
       const formatLabel = d3.timeFormat("%b");
@@ -660,10 +642,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const margin = { top: 30, right: 30, bottom: 40, left: 60 };
 
       const svg = box.append("svg")
-        .attr("width", "100%") // Maakt het responsief binnen de helft
+        .attr("width", "100%") 
         .attr("height", height)
-        .attr("viewBox", `0 0 ${width} ${height}`) // Houdt interne schaal correct
-        .attr("preserveAspectRatio", "xMidYMid meet"); // Optioneel, houd verhouding
+        .attr("viewBox", `0 0 ${width} ${height}`) 
+        .attr("preserveAspectRatio", "xMidYMid meet"); 
 
 
       const x = d3.scalePoint()

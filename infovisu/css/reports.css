@@ -528,7 +528,7 @@ footer {
   flex-direction: row;
   justify-content: space-between;
   gap: 1rem;
-  flex-wrap: nowrap; /* 🧠 prevent wrapping */
+  flex-wrap: nowrap; 
   align-items: flex-start;
 }
 
@@ -545,10 +545,9 @@ footer {
 
 .compare-column label {
   display: block;
-  margin-bottom: 0.5rem;  /* ⬅ adds space between label and select */
-  font-weight: bold;
+  margin-bottom: 0.5rem;  
   font-size: 1rem;
-  color: #f0f0f0;  /* optional */
+  color: #f0f0f0;  
 }
 
 
@@ -630,7 +629,7 @@ canvas {
 #leaderboard-search {
   display: block;
   width: 100%;
-  max-width: 400px; /* smaller for left alignment */
+  max-width: 400px; 
   padding: 0.75rem 1rem;
   font-size: 1rem;
   border: 1px solid #444;
@@ -640,7 +639,7 @@ canvas {
   margin-bottom: 1.5rem;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   transition: all 0.2s ease;
-  margin-left: 0;   /* ensure it's flush left */
+  margin-left: 0;  
 }
 
 #leaderboard-search::placeholder {
