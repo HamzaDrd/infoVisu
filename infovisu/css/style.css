@@ -195,45 +195,93 @@ footer {
   scroll-behavior: smooth;
 }
 
+.tool-grid-clean {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 30px;
+  padding: 40px 20px;
+}
+
 .tool-card-clean {
-  flex: 0 0 280px;
-  max-width: 280px;
-  background-color: #e6e1dd;
+  background-color: var(--panel-dark);
   border-radius: 16px;
   overflow: hidden;
+  transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  width: 260px;
+  min-width: 240px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  position: relative;
 }
 
-.tool-card-clean:hover {
-  transform: translateY(-8px);
-}
-
-.tool-card-clean img {
+.tool-card-clean img.tool-img-large {
   width: 100%;
-  height: 200px;
+  height: 160px;
   object-fit: cover;
 }
 
 .tool-content {
-  padding: 10px 16px 12px;
-  font-size: 14px;
+  padding: 16px;
+  text-align: left;
+  color: var(--text-light);
+  background-color: #1a1a1a;
+  flex-grow: 1;
 }
 
 .tool-content h3 {
-  margin: 6px 0 4px;
-  font-size: 16px;
+  margin: 0 0 6px;
+  font-size: 18px;
   color: var(--primary);
 }
 
 .tool-content p {
-  margin: 0 0 10px;
   font-size: 13px;
-  line-height: 1.4;
-  color: #333;
+  color: #ccc;
+  margin-bottom: 12px;
 }
+
+.tool-btn {
+  background-color: var(--primary);
+  color: #fff;
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 6px;
+  font-weight: bold;
+  text-decoration: none;
+  display: inline-block;
+  margin-bottom: 10px;
+  transition: background 0.3s ease;
+}
+
+.tool-btn:hover {
+  background-color: #d53c2e;
+}
+
+.hover-expand {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, margin-top 0.3s ease;
+}
+
+.tool-card-clean:hover .hover-expand {
+  max-height: 200px;
+  margin-top: 10px;
+}
+
+.hover-expand ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.hover-expand li {
+  font-size: 13px;
+  color: #aaa;
+  margin-bottom: 6px;
+  list-style-type: disc;
+}
+
 
 .tool-btn,
 .tool-card-clean .tool-content .btn {
