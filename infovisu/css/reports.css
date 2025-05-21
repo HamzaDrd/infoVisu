@@ -386,18 +386,22 @@ footer {
 
 /* === FILTER TILE STYLE === */
 .filter-tile {
-  background-color: #2c2c2c;
-  color: white;
-  padding: 0.4rem 0.7rem;
-  border-radius: 6px;
+  padding: 0.6rem 1.2rem;       
+  font-size: 1.2rem;              
+  border-radius: 8px;
+  background-color: #1f1f1f;
+  color: #fff;
+  border: 1px solid #333;
   cursor: pointer;
-  font-size: 0.85rem;
-  transition: 0.2s;
-  border: 1px solid #444;
+  transition: all 0.2s ease;
+  display: inline-block;
+  margin: 0.4rem 0.4rem;
 }
 
 .filter-tile.active {
-  background-color: #f44336;
+  background-color: #ff4444;
+  border-color: #ff4444;
+  color: white;
 }
 
 /* === CONFIRM BUTTON STYLING === */
@@ -430,7 +434,8 @@ footer {
 }
 
 .filter-tile:hover {
-  background-color: #3a3a3a;
+  background-color: #333;
+  border-color: #555;
 }
 
 .filter-tile.selected {
@@ -476,10 +481,12 @@ footer {
 
 
 .filter-column h3 {
-  color: #ddd;
-  font-size: 0.9rem;
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
   text-align: left;
+  letter-spacing: 0.5px; 
 }
 
 .filter-confirm {
