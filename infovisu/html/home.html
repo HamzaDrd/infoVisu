@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CrimeWatch DC – Home</title>
+  <title>Welcome to CrimeWatch DC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="../css/style.css" />
@@ -12,6 +12,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 </head>
 
 <div class="scroll-indicator" id="scroll-indicator">
@@ -29,15 +31,16 @@
       <a href="home.html" class="nav-link">Home</a>
       <a href="patrol.html" class="nav-link">Patrol</a>
       <a href="reports.html" class="nav-link">Reports info</a>
-      <a href="plan-visit.html" class="nav-link">Check Your Visit</a>
-      <a href="community-lens.html" class="nav-link">Explore Crime</a>
+      <a href="plan-visit.html" class="nav-link">Visitor Safety</a>
+      <a href="community-lens.html" class="nav-link">Compare Neighborhoods</a>
     </div>
   </nav>
 
-  <header>
+  <header data-aos="fade-down">
     <h1><span class="highlight">CrimeWatch DC</span></h1>
-    <p class="subtitle-big">Empowering Safety. Enabling Action.</p>
-    <p class="subtitle-small">Real-time crime insights for Washington DC. Built for police, policymakers, and citizens who protect and serve.</p>
+    <p class="subtitle-big">Real-time tools to understand crime in Washington DC</p>
+    <p class="subtitle-small">Explore crime patterns, reporting speed, hotspot locations and more</p>
+
   </header>
 
   <section class="visu">
@@ -129,10 +132,65 @@
     </div>
   </section>
 
+
+  <section class="faq-section">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-list">
+  
+      <div class="faq-item">
+        <h3>How can I find high-crime areas?</h3>
+        <p>Use real-time heatmaps to see which districts report the most crime.</p>
+        <a href="patrol.html" class="faq-link">Explore the Patrol Map</a>
+      </div>
+  
+      <div class="faq-item">
+        <h3>Is this place safe to visit?</h3>
+        <p>Search a ward or landmark to check nearby incidents and trends.</p>
+        <a href="plan-visit.html" class="faq-link">Check a Location</a>
+      </div>
+  
+      <div class="faq-item">
+        <h3>Can I compare neighborhoods?</h3>
+        <p>Compare crime rates, severity, and methods between two ANCs.</p>
+        <a href="community-lens.html" class="faq-link">Compare Neighborhoods</a>
+      </div>
+  
+      <div class="faq-item">
+        <h3>Which areas report crime fastest?</h3>
+        <p>See which neighborhoods file reports quickly using our leaderboard.</p>
+        <a href="reports.html" class="faq-link">View Reporting Stats</a>
+      </div>
+  
+      <div class="faq-item">
+        <h3>How has crime changed over time?</h3>
+        <p>Track monthly and weekly trends in crime volume across DC.</p>
+        <a href="patrol.html" class="faq-link">View Time Trends</a>
+      </div>
+  
+      <div class="faq-item">
+        <h3>What are the most common crime methods?</h3>
+        <p>See if incidents involve guns, knives, or other means in your area.</p>
+        <a href="community-lens.html" class="faq-link">Explore Crime Methods</a>
+      </div>
+  
+    </div>
+  </section>
+  
+  
+  
+  
+
   <footer>
     <p>© 2025 CrimeWatch DC – Built with ❤️</p>
   </footer>
 
   <script src="../js/home.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true,
+      easing: 'ease-in-out',
+    });
+  </script>
 </body>
 </html>

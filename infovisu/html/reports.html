@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>CrimeWatch DC – Reports info</title>
+  <title>Crime Reporting Timeliness in DC</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <link rel="stylesheet" href="../css/reports.css" />
@@ -10,6 +10,8 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.4/dist/aos.css">
+  <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
 
 </head>
 
@@ -23,14 +25,14 @@
       <a href="home.html" class="nav-link">Home</a>
       <a href="patrol.html" class="nav-link">Patrol</a>
       <a href="reports.html" class="nav-link">Reports info</a>
-      <a href="plan-visit.html" class="nav-link">Check Your Visit</a>
-      <a href="community-lens.html" class="nav-link">Explore Crime</a>
+      <a href="plan-visit.html" class="nav-link">Visitor Safety</a>
+      <a href="community-lens.html" class="nav-link">Compare Neighborhoods</a>
     </div>
   </nav>
 
   <!-- === PAGE INTRO HEADER === -->
-  <header>
-    <h1><span class="highlight">CrimeWatch DC</span></h1>
+  <header data-aos="fade-down">
+    <h1><span class="highlight">Reporting Speed Insights</span></h1>
     <p class="subtitle-big">Discover all insights about the reportings in DC.</p>
     <p class="subtitle-small">Quick reporting means safer streets, stronger communities, and smarter response.</p>
   </header>
@@ -143,5 +145,12 @@
   </footer>
 
   <script src="../js/reports.js"></script>
+  <script>
+    AOS.init({
+      duration: 800,
+      once: true,
+      easing: 'ease-in-out',
+    });
+  </script>
 </body>
 </html>
