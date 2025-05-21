@@ -241,12 +241,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const li = document.createElement("li");
         li.classList.add("leaderboard-row");
         li.innerHTML = `
-            <div class="rank">${rank}</div>
-            <div class="neighborhood">${clusterName}</div>
-            <div class="time" data-cluster="${entry.cluster}">${formatHoursToHM(entry.avg)}</div>
-            <div class="form"><span class="trend-icon">📊</span></div>
-            <div class="trend">${trend}</div>
-            <div class="crimes">📝 ${crimes}</div>
+          <div class="rank">${rank}</div>
+          <div class="neighborhood">${clusterName}</div>
+          <div class="time chart-button" data-cluster="${entry.cluster}" title="Click to see ART chart">${formatHoursToHM(entry.avg)}</div>
+          <div class="form"><span class="trend-icon chart-button" title="Click to see trend line chart">Check Chart</span></div>
+          <div class="trend">${trend}</div>
+          <div class="crimes">📝 ${crimes}</div>
         `;
         leaderboard.appendChild(li);
         actualRank++;
@@ -434,44 +434,51 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
 
+      // vertical line between min and max (whisker)
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() / 2)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() / 2)
         .attr("y1", y(min))
         .attr("y2", y(max))
-        .attr("stroke", "#aaa")
+        .attr("stroke", "#888") 
         .attr("stroke-width", 2);
 
+      // Box (between Q1 and Q3)
       svg.append("rect")
         .attr("x", x(clusterNames[clusterId]))
         .attr("y", y(q3))
         .attr("height", y(q1) - y(q3))
         .attr("width", x.bandwidth())
         .attr("fill", "#ff4444")
-        .attr("stroke", "#000");
+        .attr("stroke", "#ddd")        
+        .attr("stroke-width", 1.5);
 
+      // Median-line
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]))
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth())
         .attr("y1", y(median))
         .attr("y2", y(median))
-        .attr("stroke", "#000")
+        .attr("stroke", "#ffffff")     
         .attr("stroke-width", 2);
 
+      // Min-line
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() * 0.25)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() * 0.75)
         .attr("y1", y(min))
         .attr("y2", y(min))
-        .attr("stroke", "#000");
+        .attr("stroke", "#aaa");       
 
+      // Max-line
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() * 0.25)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() * 0.75)
         .attr("y1", y(max))
         .attr("y2", y(max))
-        .attr("stroke", "#000");
+        .attr("stroke", "#aaa");
 
+      // 95% Confidence Interval (CI)
       svg.append("line")
         .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() + 8)
         .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() + 8)
@@ -479,8 +486,9 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("y2", y(ciUpper))
         .attr("stroke", "#00BFFF")
         .attr("stroke-width", 2)
-        .attr("stroke-dasharray", "2,2")
-        .attr("opacity", 0.7);
+        .attr("stroke-dasharray", "4,2")
+        .attr("opacity", 0.9);
+
 
 
       const statsBox = container.append("div")
@@ -559,6 +567,29 @@ document.addEventListener("DOMContentLoaded", () => {
       const height = 400;
       const margin = { top: 30, right: 30, bottom: 40, left: 60 };
 
+      const titleRow = box.append("div")
+        .attr("class", "chart-title-row");
+
+      titleRow.append("div")
+        .attr("class", "chart-title")
+        .text(`Monthly Avg. Reporting Time – ${clusterNames[clusterId]}`); 
+
+      titleRow.append("div")
+        .attr("class", "chart-close")
+        .html("&#x2716;") 
+        .on("click", () => {
+          box.remove();
+         
+          const stillOpen = document.querySelectorAll(`.trend-chart-box[id*="${safeId}"]`);
+          if (stillOpen.length === 0) {
+            activeClusterId = null;
+            document.querySelectorAll(".leaderboard-row").forEach(row => {
+              row.classList.remove("active-highlight");
+            });
+          }
+        });
+
+
       const svg = box.append("svg")
         .attr("width", "100%") 
         .attr("height", height)
@@ -585,23 +616,44 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
 
-      svg.selectAll("rect")
+      const bars = svg.selectAll("rect")
         .data(averages)
         .enter()
         .append("rect")
         .attr("x", d => x(d.month))
-        .attr("y", d => y(d.avg))
+        .attr("y", y(0))
         .attr("width", x.bandwidth())
-        .attr("height", d => y(0) - y(d.avg))
+        .attr("height", 0)
         .attr("fill", "#ff4444");
 
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", margin.top - 10)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#ccc")
-        .attr("font-size", "16px")
-        .text(`Monthly Avg. Reporting Time – ${clusterNames[clusterId]}`);
+      bars.on("mouseover", function(event, d) {
+          d3.select(this)
+            .attr("fill", "#ff7777");
+
+          svg.append("text")
+            .attr("class", "bar-label")
+            .attr("x", x(d.month) + x.bandwidth() / 2)
+            .attr("y", y(d.avg) - 8)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#fff")
+            .attr("font-size", "12px")
+            .text(`${d.avg.toFixed(1)}h`);
+        })
+        .on("mouseout", function(event, d) {
+          d3.select(this)
+            .attr("fill", "#ff4444");
+
+          svg.selectAll(".bar-label").remove();
+        });
+
+      // Transition
+      bars.transition()
+        .duration(800)
+        .delay((d, i) => i * 100)
+        .attr("y", d => y(d.avg))
+        .attr("height", d => y(0) - y(d.avg));
+
+
     }
 
 
@@ -632,10 +684,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
+
       const box = container.append("div")
         .attr("class", "trend-chart-box")
         .attr("id", `trend-chart-${safeId}-line`)
-        .style("display", "inline-block");
+        .style("display", "inline-block");   
 
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
       const formatMonthKey = d3.timeFormat("%Y-%m");
@@ -667,6 +720,30 @@ document.addEventListener("DOMContentLoaded", () => {
       const height = 400;
       const margin = { top: 30, right: 30, bottom: 40, left: 60 };
 
+      const titleRow = box.append("div")
+        .attr("class", "chart-title-row");
+
+      titleRow.append("div")
+        .attr("class", "chart-title")
+        .text(`ART trend (last 5 months) – ${clusterNames[clusterId]}`); 
+
+      titleRow.append("div")
+        .attr("class", "chart-close")
+        .html("&#x2716;") 
+        .on("click", () => {
+          box.remove();
+          const stillOpen = document.querySelectorAll(`.trend-chart-box[id*="${safeId}"]`);
+          if (stillOpen.length === 0) {
+            activeClusterId = null;
+            document.querySelectorAll(".leaderboard-row").forEach(row => {
+              row.classList.remove("active-highlight");
+            });
+          }
+        });
+
+
+
+
       const svg = box.append("svg")
         .attr("width", "100%") 
         .attr("height", height)
@@ -686,6 +763,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("transform", `translate(0,${height - margin.bottom})`)
         .call(d3.axisBottom(x));
 
+  
+
       svg.append("g")
         .attr("transform", `translate(${margin.left},0)`)
         .call(d3.axisLeft(y));
@@ -694,12 +773,26 @@ document.addEventListener("DOMContentLoaded", () => {
         .x((d, i) => x(monthLabels[i]))
         .y(d => y(d.avg));
 
-      svg.append("path")
+
+      const path = svg.append("path")
         .datum(last5)
         .attr("fill", "none")
         .attr("stroke", "#00BFFF")
         .attr("stroke-width", 2)
         .attr("d", line);
+
+      // === Animation
+      const totalLength = path.node().getTotalLength();
+
+      path
+        .attr("stroke-dasharray", totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition()
+        .duration(1000)
+        .ease(d3.easeLinear)
+        .attr("stroke-dashoffset", 0);
+
+
 
       svg.selectAll("circle")
         .data(last5)
@@ -708,19 +801,26 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("cx", (d, i) => x(monthLabels[i]))
         .attr("cy", d => y(d.avg))
         .attr("r", 4)
-        .attr("fill", "#00BFFF");
+        .attr("fill", "#00BFFF")
 
-      svg.append("text")
-        .attr("x", width / 2)
-        .attr("y", margin.top - 10)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#ccc")
-        .attr("font-size", "14px")
-        .text(`ART trend (last 5 months) – ${clusterNames[clusterId]}`);
+        .on("mouseover", function(event, d, i) {
+          d3.select(this).transition().attr("r", 6);
+
+          svg.append("text")
+            .attr("class", "line-tooltip")
+            .attr("x", d3.select(this).attr("cx"))
+            .attr("y", d3.select(this).attr("cy") - 10)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#fff")
+            .attr("font-size", "12px")
+            .text(`${d.avg.toFixed(1)}h`);
+        })
+        .on("mouseout", function() {
+          d3.select(this).transition().attr("r", 4);
+          svg.selectAll(".line-tooltip").remove();
+        });
+     
     }
-
-
-
 
   });
 });

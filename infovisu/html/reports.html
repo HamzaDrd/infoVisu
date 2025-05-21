@@ -64,25 +64,6 @@
 
 
 
-    <!-- Top banner with logo, title and time range -->
-    <div class="page-banner">
-      <div class="banner-info">
-        <img src="../images/DC-flag.svg" class="flag-icon" />
-        <div class="banner-title">
-          <h2>Washington DC</h2>
-          <span>Crime Report Rankings 2023</span>
-        </div>
-      </div>
-      <div class="banner-title-block">
-        <h1>Leaderboard - Fastest Reported Neighborhoods</h1>
-        <div class="date-range-bar">
-          <span class="date-label">1 Jan</span>
-          <div class="bar"></div>
-          <span class="date-label">31 Dec</span>
-        </div>
-      </div>
-    </div>    
-
     <!-- Three-column layout: Legend | Leaderboard | Filters -->
     <div class="visu-content">
 
@@ -145,7 +126,10 @@
             <ul class="leaderboard-extended" id="leaderboard">
               <!-- Leaderboard rows inserted here dynamically via JS -->
             </ul>
-            <div id="trend-chart-container" style="margin-top: 2rem;"></div>
+            <div class="chart-wrapper">
+              <div id="trend-chart-container" class="trend-chart-area"></div>
+            </div>
+
           </section>
         </div>
       </div>

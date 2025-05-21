@@ -262,81 +262,6 @@ footer {
 
 
 /* === PAGE LAYOUT & STRUCTURE === */
-.page-banner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1b1b1b;
-  padding: 1rem 2rem;
-  border-radius: 0.75rem;
-  margin-bottom: 1rem;
-}
-
-.banner-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.banner-title-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-}
-
-
-
-
-.flag-icon {
-  height: 36px;
-  width: auto;
-  border-radius: 6px;
-}
-
-.banner-title h2 {
-  font-size: 1.5rem;
-  color: #fff;
-  margin: 0;
-}
-
-.banner-title span {
-  font-size: 0.875rem;
-  color: #bbb;
-}
-
-.date-range {
-  color: #ccc;
-  font-size: 0.9rem;
-}
-
-.date-range-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 0.25rem;
-  margin-bottom: 1rem;
-  width: 100%;
-  max-width: 800px;
-  margin-inline: auto;
-}
-
-.date-label {
-  font-size: 0.75rem;
-  color: #ccc;
-  flex: 0 0 auto;
-  min-width: 40px;
-  text-align: center;
-}
-
-.bar {
-  height: 6px;
-  background: linear-gradient(to right, #fff 0%, #999 100%);
-  border-radius: 4px;
-  flex: 1 1 auto;
-  margin: 0 10px;
-}
 
 /* === GRID LAYOUT STRUCTURE === */
 .visu {
@@ -625,10 +550,78 @@ canvas {
   gap: 1rem;
 }
 
-.trend-chart-box {
-  flex: 1 1 50%;
-  max-width: 45%;
+
+
+.chart-wrapper {
+  width: 100%;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
 }
+
+.trend-chart-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  max-width: 1200px; 
+  width: 100%;
+}
+
+.trend-chart-box {
+  background-color: #111;
+  border: 1px solid #333;
+  border-radius: 12px;
+  padding: 1rem;
+  flex: 1 1 48%;
+  box-sizing: border-box;
+  min-width: 400px; 
+  overflow: visible;
+  position: relative;
+}
+
+.trend-chart-area:has(.trend-chart-box:only-child) .trend-chart-box {
+  flex: 1 1 100%;
+}
+
+.line-tooltip, .bar-tooltip {
+  font-size: 12px;
+  fill: white;
+  pointer-events: none;
+}
+
+rect {
+  transition: fill 0.3s ease;
+}
+
+.chart-title {
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #eee;
+  margin-bottom: 0.5rem;
+}
+
+.chart-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.chart-close {
+  cursor: pointer;
+  color: #aaa;
+  font-size: 18px;
+  transition: color 0.2s ease;
+}
+
+.chart-close:hover {
+  color: #ff4444;
+}
+
+
 
 
 
@@ -667,4 +660,30 @@ canvas {
 
 
 
+
+.chart-button {
+  color: #ff4444; 
+  background-color: #2a2f3a;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: background-color 0.2s ease, transform 0.15s ease;
+  border: 1px solid #3d4450;
+}
+
+.chart-button:hover {
+  background-color: #3a4050;
+  transform: scale(1.05);
+  box-shadow: 0 0 6px rgba(255, 68, 68, 0.3); 
+}
+
+
+.time.chart-button {
+  font-size: 14px;
+}
+
+.trend-icon.chart-button {
+  font-size: 16px;
+  padding: 5px 8px;
+}
 
