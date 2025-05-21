@@ -507,6 +507,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeClusterId && activeClusterId !== clusterId) {
         document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
         activeClusterId = clusterId;
+        document.querySelectorAll(".leaderboard-row").forEach(row => {
+          row.classList.remove("active-highlight");
+        });
+
       } else if (!activeClusterId) {
         activeClusterId = clusterId;
       }
@@ -515,6 +519,15 @@ document.addEventListener("DOMContentLoaded", () => {
       if (document.querySelector(`#trend-chart-${safeId}-bar`)) return;
 
       const container = d3.select(selector);
+      document.querySelectorAll(".leaderboard-row").forEach(row => {
+        const cluster = row.querySelector(".time")?.dataset?.cluster;
+        if (cluster === clusterId) {
+          row.classList.add("active-highlight");
+        } else {
+          row.classList.remove("active-highlight");
+        }
+      });
+
       const box = container.append("div")
         .attr("class", "trend-chart-box")
         .attr("id", `trend-chart-${safeId}-bar`)
@@ -600,12 +613,25 @@ document.addEventListener("DOMContentLoaded", () => {
       if (activeClusterId && activeClusterId !== clusterId) {
         document.querySelectorAll(".trend-chart-box").forEach(box => box.remove());
         activeClusterId = clusterId;
+        document.querySelectorAll(".leaderboard-row").forEach(row => {
+          row.classList.remove("active-highlight");
+        });
+
       }
       
 
       if (document.querySelector(`#trend-chart-${safeId}-line`)) return;
 
       const container = d3.select(selector);
+      document.querySelectorAll(".leaderboard-row").forEach(row => {
+        const cluster = row.querySelector(".time")?.dataset?.cluster;
+        if (cluster === clusterId) {
+          row.classList.add("active-highlight");
+        } else {
+          row.classList.remove("active-highlight");
+        }
+      });
+
       const box = container.append("div")
         .attr("class", "trend-chart-box")
         .attr("id", `trend-chart-${safeId}-line`)
