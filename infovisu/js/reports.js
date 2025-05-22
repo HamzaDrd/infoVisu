@@ -419,10 +419,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return `${h}h ${m}m`;
     }
 
-    
-
-
-
     // === DRAW BOXPLOTS ===
     function drawBoxplot(clusterId, containerId, sharedMax = null) {
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
@@ -500,7 +496,7 @@ document.addEventListener("DOMContentLoaded", () => {
           d3.select(this)
             .transition()
             .duration(200)
-            .attr("fill", "#ff6666");
+            .attr("fill", "#ff9800");
 
           q1Label.style("visibility", "visible");
           q3Label.style("visibility", "visible");
