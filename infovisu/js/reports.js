@@ -400,13 +400,6 @@ document.addEventListener("DOMContentLoaded", () => {
       const min = d3.min(sorted.filter(d => d >= (q1 - 1.5 * iqr)));
       const max = d3.max(sorted.filter(d => d <= (q3 + 1.5 * iqr)));
 
-      const mean = d3.mean(data);
-      const std = d3.deviation(data);
-      const n = data.length;
-      const marginOfError = 1.96 * (std / Math.sqrt(n));
-      const ciLower = mean - marginOfError;
-      const ciUpper = mean + marginOfError;
-
 
       const width = 400;
       const height = 300;
@@ -478,18 +471,6 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("y2", y(max))
         .attr("stroke", "#aaa");
 
-      // 95% Confidence Interval (CI)
-      svg.append("line")
-        .attr("x1", x(clusterNames[clusterId]) + x.bandwidth() + 8)
-        .attr("x2", x(clusterNames[clusterId]) + x.bandwidth() + 8)
-        .attr("y1", y(ciLower))
-        .attr("y2", y(ciUpper))
-        .attr("stroke", "#00BFFF")
-        .attr("stroke-width", 2)
-        .attr("stroke-dasharray", "4,2")
-        .attr("opacity", 0.9);
-
-
 
       const statsBox = container.append("div")
         .attr("class", "boxplot-stats")
@@ -502,8 +483,6 @@ document.addEventListener("DOMContentLoaded", () => {
         <div><strong>Average Time:</strong> ${formatHoursToHM(d3.mean(data))}</div>
         <div><strong>Slowest Time:</strong> ${formatHoursToHM(max)}</div>
         <div><strong>Total Crimes:</strong> ${data.length}</div>
-        <div><strong>95% CI:</strong> ${Math.round(ciLower)}h – ${Math.round(ciUpper)}h</div>
-
 
       `);
 

@@ -145,13 +145,10 @@ footer {
 
 /* === EXTENDED LEADERBOARD (TOP 10) === */
 .leaderboard-extended {
-  width: 100%;
-  max-width: 100%;
-  margin: 30px auto;
+  list-style: none;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  margin: 0;
+  width: 100%;
 }
 
 .leaderboard-extended li {
@@ -209,7 +206,7 @@ footer {
 
 
 .leaderboard-extended li:hover {
-  transform: scale(1.10);
+  transform: scale(1.02);
 }
 
 .form {
@@ -227,16 +224,17 @@ footer {
 /* === TABLE HEADER FOR LEADERBOARD === */
 .leaderboard-header {
   display: grid;
-  grid-template-columns: 60px 1fr 100px 160px 60px 80px;
-  align-items: center;
-  color: rgba(255, 255, 255);
-  font-size: 0.85rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 20px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-  text-align: center;
+  grid-template-columns: 40px 1fr 100px 140px 60px 80px;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background-color: #1a1a1a;
+  border-bottom: 1px solid #333;
+  border-radius: 8px;
+  color: #ccc;
+  font-weight: bold;
+  margin-bottom: 1rem;
 }
+
 
 
 .leaderboard-header div {
@@ -265,7 +263,6 @@ footer {
 
 /* === GRID LAYOUT STRUCTURE === */
 .visu {
-  max-width: 1400px;
   margin: 0 auto;
   padding: 1rem;
   display: flex;
@@ -274,12 +271,15 @@ footer {
 }
 
 .visu-content {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr auto;
   gap: 2rem;
-  align-items: stretch;
+  align-items: start;
+  width: 100%;
 }
 
+
+/* Linkerblok: leaderboard */
 .main-content {
   width: 100%;
 }
@@ -287,58 +287,39 @@ footer {
 
 /* === FILTER SECTION (Top) === */
 .filter-section {
-  max-width: 800px;
-  margin: 1rem auto; 
-  padding: 2rem;
-  background-color: #1b1b1b;
+  width: 250px;
+  background-color: #1e1e1e;
+  padding: 1.2rem;
+  border-radius: 10px;
   border: 1px solid #333;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-  color: #eee;
 }
 
 
-
-
-
 .filter-section h3 {
-  font-size: 0.9rem;
-  color: #ddd;
-  margin: 0.5rem 0;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 
 
 /* === FILTER TILE STYLE === */
 .filter-tile {
-  padding: 0.6rem 1.2rem;       
-  font-size: 1.2rem;              
-  border-radius: 8px;
-  background-color: #1f1f1f;
+  background-color: #2a2a2a;
   color: #fff;
-  border: 1px solid #333;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-block;
-  margin: 0.4rem 0.4rem;
+  transition: background-color 0.2s;
 }
 
 .filter-tile.active {
   background-color: #ff4444;
-  border-color: #ff4444;
-  color: white;
 }
 
 /* === CONFIRM BUTTON STYLING === */
 #apply-filters {
-  padding: 0.75rem 1.5rem;
-  background-color: #00BFFF;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  background-color: #ff4444;
+  color: #fff;
 }
 
 #apply-filters:hover {
@@ -393,10 +374,10 @@ footer {
 
 .filter-row {
   display: flex;
-  justify-content: space-between;
-  gap: 2rem;
-  flex-wrap: wrap; 
+  flex-direction: column;
+  gap: 1.5rem;
 }
+
 
 
 .filter-column {
@@ -415,21 +396,23 @@ footer {
 }
 
 .filter-confirm {
-  margin-top: 2rem;
+  margin-top: 1rem;
   display: flex;
-  justify-content: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.filter-confirm button {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .secondary-button {
-  margin-left: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: #444;
-  border: 1px solid #777;
-  border-radius: 8px;
-  color: #eee;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
+  background-color: #333;
+  color: #ccc;
 }
 
 .secondary-button:hover {
@@ -440,9 +423,9 @@ footer {
 
 .tile-group {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  align-items: flex-start; 
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 
@@ -540,9 +523,16 @@ canvas {
   color: #fff;
 }
 
+.section-divider {
+  width: 90%;
+  height: 2px;
+  background-color: #333;
+  margin: 3rem auto 2rem auto;
+  border-radius: 1px;
+  opacity: 0.5;
+}
 
 /* === Leaderboard Plots === */
-
 #trend-chart-container {
   display: flex;
   justify-content: space-between;
@@ -623,24 +613,30 @@ rect {
 
 
 
+#leaderboard {
+  flex: 1;
+  width: 100%;
+}
 
+.chart-container {
+  width: 100%;
+  max-width: none;
+  padding: 0;
+  margin: 0;
+}
 
 /* === Search Bar === */
 #leaderboard-search {
-  display: block;
   width: 100%;
-  max-width: 400px; 
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 1rem;
   font-size: 1rem;
-  border: 1px solid #444;
-  border-radius: 8px;
-  background-color: #1e1e1e;
-  color: #eee;
+  background-color: #121212;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
   margin-bottom: 1.5rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
-  transition: all 0.2s ease;
-  margin-left: 0;  
 }
+
 
 #leaderboard-search::placeholder {
   color: #888;
@@ -657,6 +653,23 @@ rect {
   border: 1px solid #ff4444;
   box-shadow: 0 0 6px #ff4444;
 }
+
+/* Container die alles onder de searchbar bevat */
+.leaderboard-with-filters {
+  display: grid;
+  grid-template-columns: 5fr 1fr;  /* Meer ruimte voor leaderboard */
+  gap: 2rem;
+  align-items: start;
+  margin-top: 1.5rem;
+}
+
+
+.leaderboard-block {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
 
 
 
@@ -687,3 +700,14 @@ rect {
   padding: 5px 8px;
 }
 
+/* === Responsiveness === */
+@media (max-width: 900px) {
+  .leaderboard-with-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-section {
+    margin-top: 2rem;
+    max-width: 250px;
+  }
+}

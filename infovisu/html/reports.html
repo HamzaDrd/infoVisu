@@ -64,78 +64,86 @@
       </div>
     </section>
 
+    <div class="section-divider"></div>
 
 
     <!-- Three-column layout: Legend | Leaderboard | Filters -->
     <div class="visu-content">
-
-      <!-- === Top: FILTER TILE PANEL === -->
-      <aside class="filter-section">
-
-        <!-- === FILTERS IN DRIE KOLOMMEN === -->
-        <div class="filter-row">
-          <!-- Filter 1: Crime Type -->
-          <div class="filter-column">
-            <h3>Filter Crime Type</h3>
-            <div class="tile-group" data-filter="crime_type">
-              <div class="filter-tile" data-value="violent">Violent</div>
-              <div class="filter-tile" data-value="property">Property</div>
-            </div>
-          </div>
-
-          <!-- Filter 2: Shift -->
-          <div class="filter-column">
-            <h3>Filter Shift</h3>
-            <div class="tile-group" data-filter="shift">
-              <div class="filter-tile" data-value="day">Day</div>
-              <div class="filter-tile" data-value="evening">Evening</div>
-              <div class="filter-tile" data-value="midnight">Midnight</div>
-            </div>
-          </div>
-
-          <!-- Filter 3: Weapon -->
-          <div class="filter-column">
-            <h3>Filter Weapon</h3>
-            <div class="tile-group" data-filter="weapon">
-              <div class="filter-tile" data-value="gun">Gun</div>
-              <div class="filter-tile" data-value="knife">Knife</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="filter-confirm">
-          <button id="apply-filters">Confirm</button>
-          <button id="clear-filters" class="secondary-button">Clear All</button>
-        </div>
-
-      </aside>
       <!-- === CENTER: LEADERBOARD OUTPUT === -->
       <div class="main-content">
         <div class="chart-container">
           <section class="container">
-            <input type="text" id="leaderboard-search" placeholder="Search neighborhoods..." style="margin-bottom: 1rem; padding: 0.5rem; width: 100%; font-size: 1rem;" />
 
-            <div class="leaderboard-header">
-              <div>#</div>
-              <div>Neighborhood</div>
-              <div>ART</div>
-              <div>Recent 5 months</div>
-              <div>Trend</div>
-              <div>Reports</div>
+
+            <div class="leaderboard-with-filters">
+              <div class="leaderboard-block">
+
+                <input type="text" id="leaderboard-search" placeholder="Search neighborhoods..." style="margin-bottom: 1rem; padding: 0.5rem; width: 100%; font-size: 1rem;" />
+
+                <div class="leaderboard-header">
+                  <div>#</div>
+                  <div>Neighborhood</div>
+                  <div>ART</div>
+                  <div>Recent 5 months</div>
+                  <div>Trend</div>
+                  <div>Reports</div>
+                </div>
+            
+                <ul class="leaderboard-extended" id="leaderboard">
+                  <!-- Leaderboard rows inserted here dynamically via JS -->
+                </ul>
+              </div>    
+
+                    <!-- === Top: FILTER TILE PANEL === -->
+              <aside class="filter-section">
+                <!-- === FILTERS IN DRIE KOLOMMEN === -->
+                <div class="filter-row">
+                  <!-- Filter 1: Crime Type -->
+                  <div class="filter-column">
+                    <h3>Filter Crime Type</h3>
+                    <div class="tile-group" data-filter="crime_type">
+                      <div class="filter-tile" data-value="violent">Violent</div>
+                      <div class="filter-tile" data-value="property">Property</div>
+                    </div>
+                  </div>
+
+                  <!-- Filter 2: Shift -->
+                  <div class="filter-column">
+                    <h3>Filter Shift</h3>
+                    <div class="tile-group" data-filter="shift">
+                      <div class="filter-tile" data-value="day">Day</div>
+                      <div class="filter-tile" data-value="evening">Evening</div>
+                      <div class="filter-tile" data-value="midnight">Midnight</div>
+                    </div>
+                  </div>
+
+                  <!-- Filter 3: Weapon -->
+                  <div class="filter-column">
+                    <h3>Filter Weapon</h3>
+                    <div class="tile-group" data-filter="weapon">
+                      <div class="filter-tile" data-value="gun">Gun</div>
+                      <div class="filter-tile" data-value="knife">Knife</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Buttons -->
+                <div class="filter-confirm">
+                  <button id="apply-filters">Confirm</button>
+                  <button id="clear-filters" class="secondary-button">Clear All</button>
+                </div>
+
+              </aside>
+
+              <div class="chart-wrapper">
+                <div id="trend-chart-container" class="trend-chart-area"></div>
+              </div>
             </div>
 
-            <ul class="leaderboard-extended" id="leaderboard">
-              <!-- Leaderboard rows inserted here dynamically via JS -->
-            </ul>
-            <div class="chart-wrapper">
-              <div id="trend-chart-container" class="trend-chart-area"></div>
-            </div>
 
           </section>
         </div>
       </div>
-
     </div> 
   </main>
 
