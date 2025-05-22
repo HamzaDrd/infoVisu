@@ -760,3 +760,23 @@ stroke: #444;
 
 
 
+/* SCROLL INDICATOR */
+.scroll-indicator {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 24px;
+  color: var(--text-light);
+  animation: bounce 1.2s infinite;
+  z-index: 999;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  50% { transform: translate(-50%, 10px); }
+}
+
+.hidden {
+  display: none;
+}

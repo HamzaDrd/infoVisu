@@ -348,6 +348,20 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 
+window.addEventListener("scroll", () => {
+    const indicator = document.getElementById("scroll-indicator");
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const docHeight = document.documentElement.scrollHeight;
+
+    if (scrollY + windowHeight >= docHeight - 50) {
+      indicator.classList.add("hidden");
+    } else {
+      indicator.classList.remove("hidden");
+    }
+});
+
+
 /* TREND VIEW --------------------------------------------------------------------------------------------------------------- */
 
 // Load the data for the charts
@@ -1370,6 +1384,9 @@ function populateFilter(selectId, attribute, removeAllOption = false) {
   drawDayOfWeekChart(data); // New day-of-week bar chart
 
 });
+
+
+
 
 
 
