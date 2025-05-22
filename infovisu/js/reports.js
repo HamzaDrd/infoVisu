@@ -243,35 +243,20 @@ document.addEventListener("DOMContentLoaded", () => {
         li.innerHTML = `
           <div class="rank">${rank}</div>
           <div class="neighborhood">${clusterName}</div>
-          <div class="time chart-button" data-cluster="${entry.cluster}" title="Click to see ART chart">${formatHoursToHM(entry.avg)}</div>
-          <div class="form"><span class="trend-icon chart-button" title="Click to see trend line chart">Check Chart</span></div>
+          <div class="time">${formatHoursToHM(entry.avg)}</div>
           <div class="trend">${trend}</div>
           <div class="crimes">📝 ${crimes}</div>
+          <div class="charts"><button class="chart-button full" data-cluster="${entry.cluster}">Check Charts</button></div>
+
         `;
         leaderboard.appendChild(li);
         actualRank++;
-      });
-
-
-      document.querySelectorAll(".time").forEach(el => {
-        el.style.cursor = "pointer";
-        el.addEventListener("click", () => {
-          const cluster = el.dataset.cluster;
+        li.querySelector(".chart-button.full").addEventListener("click", () => {
+          const cluster = entry.cluster;
           showARTChart(cluster);
-        });
-      });
-
-      document.querySelectorAll(".form .trend-icon").forEach(icon => {
-        icon.style.cursor = "pointer";
-        icon.addEventListener("click", () => {
-          const cluster = icon.closest(".leaderboard-row").querySelector(".time").dataset.cluster;
           showRecentTrendLine(cluster);
-        });
+        });        
       });
-
-
-
-
 
     }
 

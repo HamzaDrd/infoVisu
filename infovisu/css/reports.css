@@ -159,7 +159,7 @@ footer {
   font-size: 18px;
   font-weight: 500;
   display: grid;
-  grid-template-columns: 60px 1fr 100px 160px 60px 80px;
+  grid-template-columns: 50px 1fr 100px 60px 80px 120px;
   align-items: center;
   gap: 10px;
   box-shadow: 0 0 10px rgba(255, 68, 68, 0.2);
@@ -224,7 +224,7 @@ footer {
 /* === TABLE HEADER FOR LEADERBOARD === */
 .leaderboard-header {
   display: grid;
-  grid-template-columns: 40px 1fr 100px 140px 60px 80px;
+  grid-template-columns: 50px 1fr 100px 60px 80px 120px;
   gap: 0.5rem;
   padding: 0.75rem 1rem;
   background-color: #1a1a1a;
@@ -698,6 +698,22 @@ rect {
 .trend-icon.chart-button {
   font-size: 16px;
   padding: 5px 8px;
+}
+
+
+.chart-button.full {
+  background-color: #f44336;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.chart-button.full:hover {
+  background-color: #d32f2f;
 }
 
 /* === Responsiveness === */
