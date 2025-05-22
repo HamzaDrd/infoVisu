@@ -202,13 +202,14 @@ document.addEventListener("DOMContentLoaded", () => {
       // Sort by average reporting time (ascending)
       averages.sort((a, b) => a.avg - b.avg);
 
+      // Maak alle clusters beschikbaar voor de zoekfunctie
+      window.fullLeaderboard = averages;
 
       // Determine rank trends
       averages.forEach((entry, index) => {
         const cluster = entry.cluster;
         const [prevMonth, currMonth] = lastTwoMonths;
         const prevRank = ranks[prevMonth]?.[cluster];
-
         const currRank = index + 1;
 
         if (!prevRank) {
@@ -221,7 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
             entry.trend = "➖";
         }
       });
+
+      // Selecteer enkel top 5 voor standaard leaderboardweergave
       const top5 = averages.slice(0, 5);
+
 
       // === STEP 6: Render top 10 in HTML leaderboard ===
       const leaderboard = document.getElementById("leaderboard");
@@ -261,17 +265,77 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("leaderboard-search").addEventListener("input", function () {
+      
       const query = this.value.toLowerCase();
+      const leaderboard = document.getElementById("leaderboard");
+      leaderboard.innerHTML = "";
 
-      document.querySelectorAll(".leaderboard-row").forEach(row => {
-        const name = row.querySelector(".neighborhood")?.textContent?.toLowerCase() || "";
-        if (name.includes(query)) {
-          row.style.display = "";
-        } else {
-          row.style.display = "none";
-        }
+      // If empty: show top 5
+      if (query.trim() === "") {
+        const top5 = window.fullLeaderboard.slice(0, 5);
+
+        top5.forEach((entry, i) => {
+          const li = document.createElement("li");
+          li.className = "leaderboard-row";
+          const clusterName = clusterNames[entry.cluster];
+          const rank = i + 1;
+          const crimes = entry.total_crimes ?? "–";
+
+          li.innerHTML = `
+            <div class="rank">#${rank}</div>
+            <div class="neighborhood">${clusterName}</div>
+            <div class="time">${formatHoursToHM(entry.avg)}</div>
+            <div class="trend">${entry.trend ?? "–"}</div>
+            <div class="crimes">📝 ${crimes}</div>
+            <div class="charts">
+              <button class="chart-button full">Check Charts</button>
+            </div>
+          `;
+
+          leaderboard.appendChild(li);
+
+          li.querySelector(".chart-button.full").addEventListener("click", () => {
+            showARTChart(entry.cluster);
+            showRecentTrendLine(entry.cluster);
+          });
+        });
+
+        return; 
+      }
+
+      // Search in all clusters
+      const filtered = window.fullLeaderboard.filter(entry =>
+        clusterNames[entry.cluster].toLowerCase().includes(query)
+      );
+
+      // Rebuild leaderboard based on search results
+      filtered.forEach((entry, i) => {
+        const li = document.createElement("li");
+        li.className = "leaderboard-row";
+        const clusterName = clusterNames[entry.cluster];
+        const rank = i + 1;
+        const crimes = entry.total_crimes || "–";
+
+        li.innerHTML = `
+          <div class="rank">#${rank}</div>
+          <div class="neighborhood">${clusterName}</div>
+          <div class="time">${formatHoursToHM(entry.avg)}</div>
+          <div class="trend">${entry.trend ?? "–"}</div>
+          <div class="crimes">📝 ${crimes}</div>
+          <div class="charts">
+            <button class="chart-button full">Check Charts</button>
+          </div>
+        `;
+
+        leaderboard.appendChild(li);
+
+        li.querySelector(".chart-button.full").addEventListener("click", () => {
+          showARTChart(entry.cluster);
+          showRecentTrendLine(entry.cluster);
+        });
       });
     });
+
    
 
 
