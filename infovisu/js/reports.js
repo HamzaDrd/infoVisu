@@ -429,7 +429,49 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("width", x.bandwidth())
         .attr("fill", "#ff4444")
         .attr("stroke", "#ddd")        
-        .attr("stroke-width", 1.5);
+        .attr("stroke-width", 1.5)
+        .on("mouseover", function(event) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "#ff6666");
+
+          q1Label.style("visibility", "visible");
+          q3Label.style("visibility", "visible");
+        })
+        .on("mouseout", function(event) {
+          d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "#ff4444");
+
+          q1Label.style("visibility", "hidden");
+          q3Label.style("visibility", "hidden");
+        });
+
+
+
+        // Q1 label (onderaan box) - verborgen
+        const q1Label = svg.append("text")
+          .attr("x", x(clusterNames[clusterId]) + x.bandwidth() / 2)
+          .attr("y", y(q1) + 12)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#ccc")
+          .attr("font-size", "11px")
+          .style("visibility", "hidden")
+          .text(`Q1: ${Math.round(q1)}h`);
+
+        // Q3 label (bovenaan box) - verborgen
+        const q3Label = svg.append("text")
+          .attr("x", x(clusterNames[clusterId]) + x.bandwidth() / 2)
+          .attr("y", y(q3) - 6)
+          .attr("text-anchor", "middle")
+          .attr("fill", "#ccc")
+          .attr("font-size", "11px")
+          .style("visibility", "hidden")
+          .text(`Q3: ${Math.round(q3)}h`);        
+
+
 
       // Median-line
       svg.append("line")
@@ -455,6 +497,18 @@ document.addEventListener("DOMContentLoaded", () => {
         .attr("y1", y(max))
         .attr("y2", y(max))
         .attr("stroke", "#aaa");
+
+      // Avg  
+      const avg = d3.mean(data);
+      svg.append("circle")
+        .attr("cx", x(clusterNames[clusterId]) + x.bandwidth() / 2)
+        .attr("cy", y(avg))
+        .attr("r", 4)
+        .attr("fill", "#ffffff")
+        .attr("stroke", "#222")
+        .attr("stroke-width", 1.5)
+        .append("title")
+        .text(`Average: ${formatHoursToHM(avg)}`);
 
 
       const statsBox = container.append("div")
