@@ -55,18 +55,16 @@
   <!-- Section: Crime Type -->
   <section class="chart-section">
     <h2>Top Crime Types</h2>
-    <p>These charts show the most common offense types in each selected ANC.</p>
-    <div class="lens-chart-compare">
-      <div>
-        <h3>ANC A: <span id="label-bar-a">A</span></h3>
-        <svg id="bar-chart-a" width="600" height="400"></svg>
-      </div>
-      <div>
-        <h3>ANC B: <span id="label-bar-b">B</span></h3>
-        <svg id="bar-chart-b" width="600" height="400"></svg>
-      </div>
+    <p>Compare top offenses in two ANCs.</p>
+  
+    <div class="chart-container">
+      <h3>
+        Comparing <span id="label-bar-a">ANC A</span> vs <span id="label-bar-b">ANC B</span>
+      </h3>
+      <svg id="bar-chart-combined" width="800" height="400"></svg>
     </div>
   </section>
+  
 
   <!-- Section: Crime Severity -->
   <section class="chart-section">
@@ -97,18 +95,14 @@
   <!-- Section: Crime Over Time -->
   <section class="chart-section">
     <h2>Crime Over Time</h2>
-    <p>This line chart shows how crime incidents change month by month in each ANC.</p>
-    <div class="lens-chart-compare">
-      <div>
-        <h3>ANC A: <span id="label-line-a">A</span></h3>
-        <svg id="line-chart-a" width="100%" height="400"></svg>
-      </div>
-      <div>
-        <h3>ANC B: <span id="label-line-b">B</span></h3>
-        <svg id="line-chart-b" width="100%" height="400"></svg>
-      </div>
+    <p>This line chart shows how monthly crime counts compare between two ANCs.</p>
+  
+    <div class="chart-container">
+      <h3>ANC <span id="label-line-a">A</span> vs <span id="label-line-b">B</span></h3>
+      <svg id="line-chart-combined" width="100%" height="400"></svg>
     </div>
   </section>
+  
 
   <!-- Section: Method of Crime -->
   <section class="chart-section">

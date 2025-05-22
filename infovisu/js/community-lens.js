@@ -40,8 +40,8 @@ d3.csv("../data/crime_clean.csv").then(data => {
     const ancA = timeSelect1.property("value");
     const ancB = timeSelect2.property("value");
 
-    drawLineChart(data, ancA, "line-chart-a");
-    drawLineChart(data, ancB, "line-chart-b");
+    drawCombinedLineChart(data, ancA, ancB, "#line-chart-combined");
+
 
     drawMethodChart(data, ancA, "method-chart-a");
     drawMethodChart(data, ancB, "method-chart-b");
@@ -56,14 +56,15 @@ d3.csv("../data/crime_clean.csv").then(data => {
     const ancA = ancSelect1.property("value");
     const ancB = ancSelect2.property("value");
 
-    updateChart(data, ancA, "#bar-chart-a");
-    updateChart(data, ancB, "#bar-chart-b");
+    
+    updateCombinedBarChart(data, ancA, ancB, "#bar-chart-combined");
+
 
     drawSeverityGrid(data, ancA, "#severity-grid-a");
     drawSeverityGrid(data, ancB, "#severity-grid-b");
 
-    drawLineChart(data, ancA, "line-chart-a");
-    drawLineChart(data, ancB, "line-chart-b");
+    drawCombinedLineChart(data, ancA, ancB, "#line-chart-combined");
+
 
     drawMethodChart(data, ancA, "method-chart-a");
     drawMethodChart(data, ancB, "method-chart-b");
@@ -87,46 +88,63 @@ d3.csv("../data/crime_clean.csv").then(data => {
 
 
 // bar
-function updateChart(data, selectedANC, svgId) {
+function updateCombinedBarChart(data, ancA, ancB, svgId) {
   const svg = d3.select(svgId);
   svg.selectAll("*").remove();
 
-  const filtered = selectedANC === "all"
-    ? data
-    : data.filter(d => d.anc === selectedANC);
+  const filteredA = data.filter(d => d.anc === ancA);
+  const filteredB = data.filter(d => d.anc === ancB);
 
-  const offenseCounts = d3.rollup(
-    filtered,
-    v => v.length,
-    d => {
-      const parts = d.offensekey?.split("|");
-      return parts?.[1]?.trim() || "Unknown";
-    }
-  );
+  function countOffenses(filtered) {
+    return d3.rollup(
+      filtered,
+      v => v.length,
+      d => d.offensekey?.split("|")[1]?.trim() || "Unknown"
+    );
+  }
 
-  const top = Array.from(offenseCounts.entries())
-    .sort((a, b) => b[1] - a[1])
+  const countsA = countOffenses(filteredA);
+  const countsB = countOffenses(filteredB);
+
+  const offenses = Array.from(new Set([...countsA.keys(), ...countsB.keys()]));
+  const topOffenses = offenses
+    .map(offense => ({
+      offense,
+      countA: countsA.get(offense) || 0,
+      countB: countsB.get(offense) || 0
+    }))
+    .sort((a, b) => (b.countA + b.countB) - (a.countA + a.countB))
     .slice(0, 8);
 
-  const margin = { top: 60, right: 20, bottom: 125, left: 30 };
+  const margin = { top: 60, right: 20, bottom: 125, left: 40 };
   const width = +svg.attr("width") - margin.left - margin.right;
   const height = +svg.attr("height") - margin.top - margin.bottom;
 
   const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
-  const x = d3.scaleBand()
-    .domain(top.map(d => d[0]))
+  const x0 = d3.scaleBand()
+    .domain(topOffenses.map(d => d.offense))
     .range([0, width])
-    .padding(0.2);
+    .paddingInner(0.2);
+
+  const x1 = d3.scaleBand()
+    .domain(["A", "B"])
+    .range([0, x0.bandwidth()])
+    .padding(0.1);
 
   const y = d3.scaleLinear()
-    .domain([0, d3.max(top, d => d[1])])
+    .domain([0, d3.max(topOffenses, d => Math.max(d.countA, d.countB))])
     .nice()
     .range([height, 0]);
 
+  const color = d3.scaleOrdinal()
+    .domain(["A", "B"])
+    .range(["#ff4444", "#44c2ff"]);
+
+  // Axes
   g.append("g")
-    .attr("transform", `translate(0, ${height})`)
-    .call(d3.axisBottom(x))
+    .attr("transform", `translate(0,${height})`)
+    .call(d3.axisBottom(x0))
     .selectAll("text")
     .attr("transform", "rotate(-40)")
     .style("text-anchor", "end")
@@ -137,7 +155,7 @@ function updateChart(data, selectedANC, svgId) {
     .selectAll("text")
     .style("fill", "#ccc");
 
-  // Tooltip div
+  // Tooltip
   const tooltip = d3.select("body")
     .append("div")
     .attr("class", "bar-tooltip")
@@ -150,29 +168,60 @@ function updateChart(data, selectedANC, svgId) {
     .style("font-size", "13px")
     .style("opacity", 0);
 
-  g.selectAll(".bar")
-    .data(top)
+  // Bars
+  g.selectAll("g.bar-group")
+    .data(topOffenses)
+    .enter()
+    .append("g")
+    .attr("transform", d => `translate(${x0(d.offense)}, 0)`)
+    .selectAll("rect")
+    .data(d => [
+      { key: "A", value: d.countA },
+      { key: "B", value: d.countB }
+    ])
     .enter()
     .append("rect")
-    .attr("class", "bar")
-    .attr("x", d => x(d[0]))
-    .attr("y", d => y(d[1]))
-    .attr("width", x.bandwidth())
-    .attr("height", d => height - y(d[1]))
-    .attr("fill", "#ff4444")
-    .attr("rx", 4)
+    .attr("x", d => x1(d.key))
+    .attr("y", d => y(d.value))
+    .attr("width", x1.bandwidth())
+    .attr("height", d => height - y(d.value))
+    .attr("fill", d => color(d.key))
     .on("mouseover", function (event, d) {
-      d3.select(this).attr("fill", "#ffa500");
+      d3.select(this).attr("fill", d3.color(color(d.key)).brighter(1));
       tooltip.transition().duration(150).style("opacity", 0.9);
-      tooltip.html(`<strong>${d[0]}</strong><br/>${d[1]} incidents`)
+      tooltip.html(`<strong>ANC ${d.key}</strong><br/>${d.value} incidents`)
         .style("left", (event.pageX + 12) + "px")
         .style("top", (event.pageY - 28) + "px");
     })
-    .on("mouseout", function () {
-      d3.select(this).attr("fill", "#ff4444");
+    .on("mouseout", function (event, d) {
+      d3.select(this).attr("fill", color(d.key));
       tooltip.transition().duration(150).style("opacity", 0);
     });
+
+  // Add legend
+  const legend = svg.append("g")
+    .attr("transform", `translate(${width - 120}, 10)`);
+
+  legend.selectAll("rect")
+    .data(["A", "B"])
+    .enter()
+    .append("rect")
+    .attr("x", 0)
+    .attr("y", (d, i) => i * 20)
+    .attr("width", 12)
+    .attr("height", 12)
+    .attr("fill", d => color(d));
+
+  legend.selectAll("text")
+    .data(["A", "B"])
+    .enter()
+    .append("text")
+    .attr("x", 18)
+    .attr("y", (d, i) => i * 20 + 10)
+    .style("fill", "#ccc")
+    .text(d => `ANC ${d === "A" ? ancA : ancB}`);
 }
+
 
 
 // heatmap 
@@ -315,44 +364,60 @@ d3.csv("../data/crime_clean.csv").then(data => {
 
   const ancA = "2D";
   const ancB = "6C";
-  drawLineChart(data, ancA, "line-chart-a");
-  drawLineChart(data, ancB, "line-chart-b");
+  drawCombinedLineChart(data, ancA, ancB, "#line-chart-combined");
+
   drawMethodChart(data, ancA, "method-chart-a");
   drawMethodChart(data, ancB, "method-chart-b");
 });
 
-function drawLineChart(data, anc, elementId) {
-  const svg = d3.select(`#${elementId}`);
+function drawCombinedLineChart(data, ancA, ancB, svgId) {
+  const svg = d3.select(svgId);
   svg.selectAll("*").remove();
 
-  const margin = { top: 40, right: 30, bottom: 60, left: 60 },
-    width = svg.node().getBoundingClientRect().width - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
-
-  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
-
-  const filtered = data.filter(d => d.anc === anc);
   const parseMonth = d3.timeParse("%Y-%m");
   const minDate = new Date(2022, 11);
 
-  const timeCounts = Array.from(
-    d3.rollup(filtered, v => v.length, d => d.month),
-    ([month, count]) => {
-      const parsed = parseMonth(month);
-      return parsed && parsed >= minDate ? { month: parsed, count } : null;
-    }
-  ).filter(d => d !== null).sort((a, b) => a.month - b.month);
+  function prepSeries(anc) {
+    return Array.from(
+      d3.rollup(
+        data.filter(d => d.anc === anc),
+        v => v.length,
+        d => d.month
+      ),
+      ([month, count]) => {
+        const parsed = parseMonth(month);
+        return parsed && parsed >= minDate ? { month: parsed, count } : null;
+      }
+    ).filter(d => d !== null).sort((a, b) => a.month - b.month);
+  }
 
-  const maxDate = d3.max(timeCounts, d => d.month);
+  const seriesA = prepSeries(ancA);
+  const seriesB = prepSeries(ancB);
+  const allDates = [...seriesA, ...seriesB].map(d => d.month);
+
+  const margin = { top: 40, right: 30, bottom: 60, left: 60 },
+        width = svg.node().getBoundingClientRect().width - margin.left - margin.right,
+        height = 400 - margin.top - margin.bottom;
+
+  const g = svg.append("g").attr("transform", `translate(${margin.left},${margin.top})`);
 
   const x = d3.scaleTime()
-    .domain([minDate, maxDate])
+    .domain([d3.min(allDates), d3.max(allDates)])
     .range([0, width]);
 
   const y = d3.scaleLinear()
-    .domain([0, d3.max(timeCounts, d => d.count)]).nice()
+    .domain([0, d3.max([...seriesA, ...seriesB], d => d.count)]).nice()
     .range([height, 0]);
 
+  const line = d3.line()
+    .x(d => x(d.month))
+    .y(d => y(d.count));
+
+  const color = d3.scaleOrdinal()
+    .domain(["A", "B"])
+    .range(["#ff4444", "#44c2ff"]);
+
+  // Axes
   g.append("g")
     .attr("transform", `translate(0,${height})`)
     .call(d3.axisBottom(x).ticks(6).tickFormat(d3.timeFormat("%b %Y")))
@@ -365,17 +430,6 @@ function drawLineChart(data, anc, elementId) {
     .call(d3.axisLeft(y))
     .selectAll("text")
     .style("fill", "#ccc");
-
-  const line = d3.line()
-    .x(d => x(d.month))
-    .y(d => y(d.count));
-
-  g.append("path")
-    .datum(timeCounts)
-    .attr("fill", "none")
-    .attr("stroke", "#ff4444")
-    .attr("stroke-width", 2.5)
-    .attr("d", line);
 
   // Tooltip
   const tooltip = d3.select("body")
@@ -390,27 +444,57 @@ function drawLineChart(data, anc, elementId) {
     .style("font-size", "13px")
     .style("opacity", 0);
 
-  // Dots
-  g.selectAll(".dot")
-    .data(timeCounts)
-    .enter()
-    .append("circle")
-    .attr("class", "dot")
-    .attr("cx", d => x(d.month))
-    .attr("cy", d => y(d.count))
-    .attr("r", 4)
-    .attr("fill", "#ff4444")
-    .on("mouseover", function (event, d) {
-      d3.select(this).attr("fill", "#ffa500").attr("r", 6);
-      tooltip.transition().duration(150).style("opacity", 0.9);
-      tooltip.html(`<strong>${d3.timeFormat("%B %Y")(d.month)}</strong><br/>${d.count} incidents`)
-        .style("left", (event.pageX + 12) + "px")
-        .style("top", (event.pageY - 28) + "px");
-    })
-    .on("mouseout", function () {
-      d3.select(this).attr("fill", "#ff4444").attr("r", 4);
-      tooltip.transition().duration(150).style("opacity", 0);
-    });
+  function drawDotsAndPath(series, key) {
+    g.append("path")
+      .datum(series)
+      .attr("fill", "none")
+      .attr("stroke", color(key))
+      .attr("stroke-width", 2.5)
+      .attr("d", line);
+
+    g.selectAll(`.dot-${key}`)
+      .data(series)
+      .enter()
+      .append("circle")
+      .attr("class", `dot-${key}`)
+      .attr("cx", d => x(d.month))
+      .attr("cy", d => y(d.count))
+      .attr("r", 4)
+      .attr("fill", color(key))
+      .on("mouseover", function (event, d) {
+        d3.select(this).attr("r", 6).attr("fill", d3.color(color(key)).brighter(1));
+        tooltip.transition().duration(150).style("opacity", 0.9);
+        tooltip.html(`<strong>ANC ${key}</strong><br/>${d3.timeFormat("%B %Y")(d.month)}<br/>${d.count} incidents`)
+          .style("left", (event.pageX + 12) + "px")
+          .style("top", (event.pageY - 28) + "px");
+      })
+      .on("mouseout", function () {
+        d3.select(this).attr("r", 4).attr("fill", color(key));
+        tooltip.transition().duration(150).style("opacity", 0);
+      });
+  }
+
+  drawDotsAndPath(seriesA, "A");
+  drawDotsAndPath(seriesB, "B");
+
+  // Legend
+  const legend = svg.append("g")
+    .attr("transform", `translate(${width - 150}, 10)`);
+
+  ["A", "B"].forEach((key, i) => {
+    legend.append("rect")
+      .attr("x", 0)
+      .attr("y", i * 20)
+      .attr("width", 12)
+      .attr("height", 12)
+      .attr("fill", color(key));
+
+    legend.append("text")
+      .attr("x", 20)
+      .attr("y", i * 20 + 10)
+      .text(`ANC ${key === "A" ? ancA : ancB}`)
+      .style("fill", "#ccc");
+  });
 }
 
 function drawMethodChart(data, anc, elementId) {

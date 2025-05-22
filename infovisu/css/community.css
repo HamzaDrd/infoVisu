@@ -79,12 +79,6 @@ header p {
   min-height: 500px; /* <-- this is the key line */
 }
 
-svg {
-  height: 100%;
-  width: 100%;
-  display: block;
-}
-
 
 
 /* === Headings === */
@@ -261,4 +255,18 @@ svg {
 .term-explainer abbr {
   text-decoration: underline dotted;
   cursor: help;
+}
+
+
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.chart-container {
+  background-color: var(--panel-dark);
+  padding: 30px;
+  border-radius: 12px;
+  margin: 0 auto;
+  max-width: 900px;
 }
