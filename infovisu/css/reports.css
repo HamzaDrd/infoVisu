@@ -1,5 +1,4 @@
 /* === GLOBAL STYLING === */
-
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
@@ -38,7 +37,7 @@ main {
   padding: 0 40px;
 }
 
-/* === CALL TO ACTION BUTTONS === */
+/* === CTA BUTTONS === */
 .cta-button {
   background-color: #ff4444;
   color: white;
@@ -111,7 +110,7 @@ footer {
   gap: 14px;
 }
 
-/* === COMPACT LEADERBOARD STYLE === */
+/* === LEADERBOARD STYLE === */
 .leaderboard li {
   background-color: #1a1a1a;
   color: #eee;
@@ -143,7 +142,7 @@ footer {
   text-align: right;
 }
 
-/* === EXTENDED LEADERBOARD (TOP 10) === */
+/* === EXTENDED LEADERBOARD (TOP 5) === */
 .leaderboard-extended {
   list-style: none;
   padding: 0;
@@ -221,7 +220,7 @@ footer {
 }
 
 
-/* === TABLE HEADER FOR LEADERBOARD === */
+/* === COLUMN HEADER FOR LEADERBOARD === */
 .leaderboard-header {
   display: grid;
   grid-template-columns: 50px 1fr 100px 60px 80px 120px;
@@ -260,8 +259,6 @@ footer {
 
 
 /* === PAGE LAYOUT & STRUCTURE === */
-
-/* === GRID LAYOUT STRUCTURE === */
 .visu {
   margin: 0 auto;
   padding: 1rem;
@@ -279,13 +276,13 @@ footer {
 }
 
 
-/* Linkerblok: leaderboard */
+/* LEFT leaderboard */
 .main-content {
   width: 100%;
 }
 
 
-/* === FILTER SECTION (Top) === */
+/* === FILTER SECTION (Right) === */
 .filter-section {
   width: 250px;
   background-color: #1e1e1e;
@@ -301,8 +298,8 @@ footer {
 
 
 .filter-section h3 {
-  margin-bottom: 0.3rem;  /* was groter */
-  margin-top: 0.8rem;     /* verklein eventueel */
+  margin-bottom: 0.3rem; 
+  margin-top: 0.8rem;     
   font-size: 1rem;
 }
 
@@ -669,10 +666,10 @@ rect {
   box-shadow: 0 0 6px #ff4444;
 }
 
-/* Container die alles onder de searchbar bevat */
+/* Container below Searchbar */
 .leaderboard-with-filters {
   display: grid;
-  grid-template-columns: 5fr 1fr;  /* Meer ruimte voor leaderboard */
+  grid-template-columns: 5fr 1fr;  
   gap: 2rem;
   align-items: start;
   margin-top: 1.5rem;

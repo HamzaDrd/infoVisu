@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const crimeCounts = {};
       const monthlyDelays = {};
 
-      // === STEP 1: Organize data by cluster and compute reporting delays ===
+      // Organize data by cluster and compute reporting delays ===
       data.forEach(d => {
         const start = parseTime(d.start_date);
         const report = parseTime(d.report_date);
@@ -151,7 +151,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // === STEP 2: Determine recent months ===
+      // Determine recent months ===
       const allMonths = new Set();
       Object.values(monthlyDelays).forEach(clusterMonths => {
         Object.keys(clusterMonths).forEach(month => allMonths.add(month));
@@ -160,14 +160,14 @@ document.addEventListener("DOMContentLoaded", () => {
       const last5Months = sortedMonths.slice(-5);
       const lastTwoMonths = sortedMonths.slice(-2);
 
-      // === STEP 3: Build "form" performance indicators per cluster ===
+      // Build "form" performance indicators per cluster ===
       const formDict = {};
       Object.keys(monthlyDelays).forEach(cluster => {
         formDict[cluster] = ""; // of eventueel "📈" als je wil
       });
 
 
-      // === STEP 4: Compute rankings per month to determine trends ===
+      // Compute rankings per month to determine trends ===
       const monthlyAvg = {};
       Object.entries(monthlyDelays).forEach(([cluster, monthData]) => {
         Object.entries(monthData).forEach(([month, values]) => {
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
       
-      // === STEP 5: Build summary statistics per cluster ===
+      // Build summary statistics per cluster ===
       const averages = Object.entries(delays).map(([cluster, hours]) => {
         return {
           cluster,
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Sort by average reporting time (ascending)
       averages.sort((a, b) => a.avg - b.avg);
 
-      // Maak alle clusters beschikbaar voor de zoekfunctie
+      // Make all clusters accessable for search
       window.fullLeaderboard = averages;
 
       // Determine rank trends
@@ -223,11 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Selecteer enkel top 5 voor standaard leaderboardweergave
+      // Select only top 5
       const top5 = averages.slice(0, 5);
 
 
-      // === STEP 6: Render top 10 in HTML leaderboard ===
+      // Render top 5 in HTML leaderboard 
       const leaderboard = document.getElementById("leaderboard");
       leaderboard.innerHTML = "";
       let actualRank = 1;
@@ -339,7 +339,7 @@ document.addEventListener("DOMContentLoaded", () => {
    
 
 
-    // === FILTER TILE INTERACTIES (Visual toggles) ===
+    // FILTER TILE INTERACTIES
     document.querySelectorAll(".filter-tile").forEach(tile => {
       tile.addEventListener("click", () => {
         tile.classList.toggle("active");
@@ -349,7 +349,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     
-    // === FILTER CONFIRM BUTTON ===
+    // FILTER CONFIRM BUTTON
     document.getElementById("apply-filters").addEventListener("click", () => {
       const filters = {
         crime_type: [],
@@ -365,12 +365,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       });
 
-      // === RELOAD LEADERBOARD WITH FILTERS ===
+      // RELOAD LEADERBOARD WITH FILTERS 
       applyFilters(filters);
     });
 
     
-    // === FILTER CLEAR ALL BUTTON ===
+    // FILTER CLEAR ALL BUTTON 
     document.getElementById("clear-filters").addEventListener("click", () => {
       // Remove all filters
       document.querySelectorAll(".filter-tile.active").forEach(tile => {
@@ -383,7 +383,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-    // === VISUAL FEEDBACK ON CONFIRM BUTTON ===
+    // VISUAL FEEDBACK ON CONFIRM BUTTON 
     const applyButton = document.getElementById('apply-filters');
     applyButton.addEventListener('click', () => {
       applyButton.classList.add('active');
@@ -394,7 +394,7 @@ document.addEventListener("DOMContentLoaded", () => {
       
     });
 
-    // === APPLY FILTERS ===
+    // APPLY FILTERS
     function applyFilters(filters) {
       const filtered = window.originalCrimeData.filter(d => {
         const offenseGroup = d.offense_group?.toLowerCase();
@@ -411,7 +411,7 @@ document.addEventListener("DOMContentLoaded", () => {
       buildLeaderboard(filtered); // Rebuild Leaderboard with filtered data
     }
 
-    // === Helper ===
+    // Helper
     function formatHoursToHM(hoursFloat) {
       const totalMinutes = Math.round(hoursFloat * 60);
       const h = Math.floor(totalMinutes / 60);
@@ -419,7 +419,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return `${h}h ${m}m`;
     }
 
-    // === DRAW BOXPLOTS ===
+    // DRAW BOXPLOTS 
     function drawBoxplot(clusterId, containerId, sharedMax = null) {
       const parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
       const container = d3.select(`#${containerId}`);
@@ -513,7 +513,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-        // Q1 label (onderaan box) - verborgen
+        // Q1 label (below box) - hidden
         const q1Label = svg.append("text")
           .attr("x", x(clusterNames[clusterId]) + x.bandwidth() / 2)
           .attr("y", y(q1) + 12)
@@ -523,7 +523,7 @@ document.addEventListener("DOMContentLoaded", () => {
           .style("visibility", "hidden")
           .text(`Q1: ${Math.round(q1)}h`);
 
-        // Q3 label (bovenaan box) - verborgen
+        // Q3 label (bovenaan box) - hidden
         const q3Label = svg.append("text")
           .attr("x", x(clusterNames[clusterId]) + x.bandwidth() / 2)
           .attr("y", y(q3) - 6)
