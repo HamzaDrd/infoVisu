@@ -160,7 +160,7 @@
 
 
 <!-- Trend view -->
-<div id="trend-view" style="display: none;">
+<div id="trend-view" class="trend-view">
 
   <!-- Crime Evolution View -->
   <header>
@@ -170,11 +170,13 @@
 
 <main>
   <!-- section for the crime-count interactive visu -->
-  <section class="crime-evolution-visu">
+  <section>
     <h2>Crime Evolution</h2>
-    <p class="subtitle-small">Compare crime at multiple temporal scales and discover or analyse patterns.</p>
-    <div class="visu-timeline-grid">
-      <div class="timeline-and-filters">
+    <p class="subtitle">Compare crime at multiple temporal scales and discover or analyse patterns.</p>
+    <div>
+      <div>
+
+        <!-- TO-DO: filter-panel is responsive but chart-and-heatmap container not -->
 
         <div class="timeline-filter-panel">
           <label for="offense-select">Offense Group:</label>
@@ -196,25 +198,25 @@
         <div class="chart-and-heatmap-container">
           <div>
             <h3>Monthly Crime Evolution</h3>
-            <p class="subtitle-small">Get the big-picture of how crime evolved through the seasons of 2023.</p>
+            <p class="subtitle">Get the big-picture of how crime evolved through the seasons of 2023.</p>
             <p class="help-text">Tip: Click on a bar to view detailed crime statistics for that month. Select a month to update the weekly average chart to that month and press outside of the chart to unselect.</p>
             <div class="chart-container">
-              <svg id="timeline-chart-svg" width="400" height="300"></svg>
+              <svg id="timeline-chart-svg"></svg>
             </div>
           </div>
           <div>
             <h3>Day of Week Analysis</h3>
-            <p class="subtitle-small">Explore the weekly patterns of crime. Each bar represents a day of the week, with the height indicating the number of incidents.</p>
+            <p class="subtitle">Explore the weekly patterns of crime. Each bar represents a day of the week, with the height indicating the number of incidents.</p>
             <div class="chart-container">
               <svg id="day-of-week-chart-svg" width="400" height="300"></svg>
             </div>
           </div>
           <div>
             <h3>Daily Crime Evolution</h3>
-            <p class="subtitle-small">Each square is one date, shaded by total incidents—so you can instantly spot “red-hot” days.</p>
+            <p class="subtitle">Each square is one date, shaded by total incidents—so you can instantly spot “red-hot” days.</p>
             <p class="help-text">Tip: Click on a square to view detailed crime statistics for that day.</p>
             <div class="chart-container">
-              <svg id="daily-crime-chart-svg" width="400" height="300"></svg>
+              <svg id="daily-crime-chart-svg"></svg>
             </div>
           </div>
         </div>
@@ -254,22 +256,22 @@
 </script>
 
 <!-- Detailed view for monthly barchart-->
-<div id="crime-type-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span id="close-crime-type-modal" class="close">&times;</span>
-    <h2>Detailed View for <span id="modal-month-title"></span></h2>
+<div id="monthly-detailed-view" class="detailed-view">
+  <div class="detailed-view-container">
+    <span id="close-monthly-detailed-view" class="close">&times;</span>
+    <h2>Detailed View for <span id="month-title"></span></h2>
     <div class="detailed-view-content">
       <div class="detailed-upper-section">
         <div id="crime-type-piechart-container" >
           <h3>Crime Type Distribution</h3>
-          <p class="subtitle-small">The distribution of crimes over offense-group</p>
+          <p class="subtitle">The distribution of crimes over offense-group</p>
           <div class="detailed-chart-container">
             <svg id="crime-type-piechart-svg" width="300" height="300"></svg>
           </div>
         </div>
         <div id="shift-barchart-container">
           <h3>Shift Distribution</h3>
-          <p class="subtitle-small">The distribution of crimes over shifts</p>
+          <p class="subtitle">The distribution of crimes over shifts</p>
           <div class="detailed-chart-container">
             <svg id="shift-barchart-svg" width="300" height="300"></svg>
           </div>
@@ -278,14 +280,14 @@
       <div class="detailed-lower-section">
         <div id="weekly-trend-container">
           <h3>Weekly Trend</h3>
-          <p class="subtitle-small">The distribution of crimes on a weekly basis of the selected month</p>
+          <p class="subtitle">The distribution of crimes on a weekly basis of the selected month</p>
           <div class="detailed-chart-container">
             <svg id="weekly-trend-svg" width="400" height="300"></svg>
           </div>
         </div>
         <div id="top-wards-container">
           <h3>Top 5 Wards</h3>
-          <p class="subtitle-small">The wards with the highest crime counts in the selected month</p>
+          <p class="subtitle">The wards with the highest crime counts in the selected month</p>
           <div class="detailed-chart-container">
             <svg id="top-wards-svg" width="400" height="300"></svg>
           </div>
@@ -296,53 +298,35 @@
 </div>
 
 <!-- Detailed view for heat-calendar -->
-<div id="piechart-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span id="close-modal" class="close">&times;</span>
-    <h2>Detailed Crime View for <span id="modal-day-title"></span></h2>
+<div id="daily-detailed-view" class="detailed-view">
+  <div class="detailed-view-container">
+    <span id="close-daily-detailed-view" class="close">&times;</span>
+    <h2>Detailed Crime View for <span id="day-title"></span></h2>
     <div class="detailed-view-content">
       <div class="detailed-upper-section">
         <div id="piechart-container">
           <h3>Crimes by Offense Group</h3>
-          <p class="subtitle-small">The distribution of crimes over offense groups</p>
+          <p class="subtitle">The distribution of crimes over offense groups</p>
           <div class="detailed-chart-container">
-            <svg id="piechart-svg" width="300" height="300"></svg>
+            <svg id="piechart-svg"></svg>
           </div>
         </div>
         <div id="barchart-container">
           <h3>Shift Distribution</h3>
-          <p class="subtitle-small">The distribution of crimes over shifts</p>
+          <p class="subtitle">The distribution of crimes over shifts</p>
           <div class="detailed-chart-container">
-            <svg id="barchart-svg" width="300" height="300"></svg>
+            <svg id="barchart-svg"></svg>
           </div>
         </div>
       </div>
       <div class="detailed-lower-section">
         <div id="method-barchart-container">
           <h3>Crimes by Offensekey</h3>
-          <p class="subtitle-small">The distribution of crimes by offensekey</p>
+          <p class="subtitle">The distribution of crimes by offensekey</p>
           <div class="detailed-chart-container">
-            <svg id="method-barchart-svg" width="700" height="400"></svg>
+            <svg id="method-barchart-svg"></svg>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Detailed view for day-of-week chart -->
-<div id="day-of-week-modal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span id="close-day-modal" class="close">&times;</span>
-    <h2>Detailed View for <span id="day-of-week-title"></span></h2>
-    <div class="content">
-      <div id="shift-barchart-container">
-        <h3>Average Crimes by Shift</h3>
-        <svg id="shift-barchart-svg" width="400" height="300"></svg>
-      </div>
-      <div id="offense-piechart-container">
-        <h3>Offense Group Distribution</h3>
-        <svg id="offense-piechart-svg" width="400" height="300"></svg>
       </div>
     </div>
   </div>
